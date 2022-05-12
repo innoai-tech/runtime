@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - 'v*'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - uses: actions/setup-go@v3
+        with:
+          go-version: '^1.18'
+
+      - uses: giantswarm/install-binary-action@v1.0.0
+        with:
+          binary: "dagger"
+          download_url: "https://github.com/morlay/dagger/releases/download/${version}/${binary}_${version}_linux_amd64.tar.gz"
+          version: "v0.3.0-beta"
+          tarball_binary_path: "${binary}"
+          smoke_test: "${binary} version"
+
+      - run: make push
+        env:
+          GH_USERNAME: ${{ github.actor }}
+          GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+          GIT_SHA: ${{ github.sha }}
+          GIT_REF: ${{ github.ref }}
