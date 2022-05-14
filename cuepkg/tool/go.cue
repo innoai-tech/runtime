@@ -45,8 +45,7 @@ import (
 	}
 
 	image: {
-		goVersion:      "\(gomod.go)"
-		downloadMirror: string | *"dl-cdn.alpinelinux.org"
+		goVersion: "\(gomod.go)"
 		packages: [pkgName=string]: string | *""
 	}
 
@@ -54,7 +53,6 @@ import (
 		workdir: "/go/src"
 		mounts: [Name=string]: core.#Mount
 		env: [Name=string]:    string | dagger.#Secret
-
 		env: {
 			if cgoEnabled {
 				CGO_ENABLED: "1"
@@ -135,11 +133,10 @@ import (
 	goVersion: string | *"1.18"
 
 	packages: {
-		"git":        _
-		"alpine-sdk": _
+		"git": _
 	}
 
-	#AlpineBuild & {
-		source: "golang:\(goVersion)-alpine"
+	#DebianBuild & {
+		source: "golang:\(goVersion)-\(#DebianVersion)"
 	}
 }

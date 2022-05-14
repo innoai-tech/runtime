@@ -18,8 +18,6 @@ dagger.#Plan & {
 			GIT_SHA: string | *""
 			GIT_REF: string | *""
 
-			LINUX_MIRROR: string | *"dl-cdn.alpinelinux.org"
-
 			GOPROXY:   string | *""
 			GOPRIVATE: string | *""
 			GOSUMDB:   string | *""
@@ -28,9 +26,7 @@ dagger.#Plan & {
 			GH_PASSWORD: dagger.#Secret
 		}
 
-		for _os in actions.build.targetPlatform.os for _arch in actions.build.targetPlatform.arch {
-			filesystem: "./build/output/\(actions.build.name)_\(_os)_\(_arch)": write: contents: actions.build["\(_os)/\(_arch)"].output
-		}
+		filesystem: "./build/output": write: contents: actions.export.output
 	}
 
 	actions: {
@@ -39,6 +35,7 @@ dagger.#Plan & {
 				"\(k)": v
 			}
 		}
+
 		_buildPlatform: {
 			for k, v in client.platform if k != "$dagger" {
 				"\(k)": v
@@ -59,7 +56,7 @@ dagger.#Plan & {
 			source: _source.output
 		}
 
-		_imageName: "ghcr.io/\(strings.TrimPrefix(info.module, "github.com/"))"
+		_imageName: "ghcr.io/\(strings.TrimPrefix(info.module, "github.com/"))/webappserve"
 		_version:   tool.#ParseVersion & {_, #ref: _env.GIT_REF, #version: _env.VERSION}
 		_tag:       _version
 		_archs: ["amd64", "arm64"]
@@ -73,9 +70,6 @@ dagger.#Plan & {
 					arch: _archs
 					os: ["linux"]
 				}
-				image: {
-					downloadMirror: "\(_env.LINUX_MIRROR)"
-				}
 				run: {
 					env: _env
 				}
@@ -87,16 +81,24 @@ dagger.#Plan & {
 			}
 		}
 
+		export: tool.#Export & {
+			inputs: {
+				for _os in build.targetPlatform.os for _arch in build.targetPlatform.arch {
+					"\(build.name)_\(_os)_\(_arch)": build["\(_os)/\(_arch)"].output
+				}
+			}
+		}
+
 		image: {
 			for _arch in _archs {
 				"linux/\(_arch)": docker.#Build & {
 					steps: [
-						tool.#AlpineBuild & {
+						tool.#DebianBuild & {
 							platform: "linux/\(_arch)"
 						},
 						docker.#Copy & {
 							contents: build["linux/\(_arch)"].output
-							source:   "./"
+							source:   "/"
 							dest:     "/"
 						},
 						docker.#Set & {

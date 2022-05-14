@@ -1,0 +1,17 @@
+{
+  "name": "@innoai-tech/tsconfig",
+  "version": "0.1.0",
+  "type": "module",
+  "files": [
+    "tsconfig.json"
+  ],
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:innoai-tech/runtime.git",
+    "directory": "nodepkg/@innoai-tech/tsconfig"
+  }
+}

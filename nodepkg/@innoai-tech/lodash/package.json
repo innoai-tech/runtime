@@ -1,0 +1,26 @@
+{
+  "name": "@innoai-tech/lodash",
+  "version": "0.0.0",
+  "dependencies": {
+    "@types/lodash-es": "^4.17.6",
+    "lodash": "^4.17.21",
+    "lodash-es": "^4.17.21"
+  },
+  "type": "module",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:innoai-tech/runtime.git",
+    "directory": "nodepkg/@innoai-tech/lodash"
+  },
+  "types": "./lodash.d.ts",
+  "exports": {
+    ".": {
+      "import": "./lodash.mjs",
+      "require": "./lodash.cjs"
+    }
+  }
+}

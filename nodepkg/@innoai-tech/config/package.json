@@ -1,0 +1,48 @@
+{
+  "name": "@innoai-tech/config",
+  "version": "0.1.0",
+  "monobundle": {
+    "env": "browser",
+    "exports": {
+      ".": "./src/index.ts",
+      "./vite-plugin-inject-config": "./src/vite-plugin-inject-config/index.ts"
+    }
+  },
+  "dependencies": {
+    "@babel/runtime-corejs3": "*",
+    "vite": "^2.9.9"
+  },
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "bin": {},
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    },
+    "./vite-plugin-inject-config": {
+      "import": {
+        "types": "./dist/vite-plugin-inject-config.d.ts",
+        "default": "./dist/vite-plugin-inject-config.mjs"
+      }
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublishOnly": "../../../node_modules/.bin/monobundle"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:innoai-tech/runtime.git",
+    "directory": "nodepkg/@innoai-tech/config"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}

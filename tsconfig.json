@@ -1,0 +1,21 @@
+{
+  "compileOnSave": true,
+  "extends": "@innoai-tech/tsconfig/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build",
+    "baseUrl": "./nodepkg",
+    "rootDir": ".",
+    "paths": {
+      "*": [
+        "__types__/*",
+        "*/src/index.ts",
+        "*"
+      ]
+    }
+  },
+  "exclude": [
+    "dist/*",
+    "build/*",
+    "node_modules/*"
+  ]
+}

@@ -1,8 +1,8 @@
 module: "github.com/innoai-tech/webappserve"
 
 require: {
-	"dagger.io":                "v0.2.8-0.20220511044324-8b1480953466" @vcs("release-main")
-	"universe.dagger.io":       "v0.2.8-0.20220511044324-8b1480953466" @vcs("release-main")
+	"dagger.io":          "v0.2.8-0.20220513062922-fef589b33ac3" @vcs("release-main")
+	"universe.dagger.io": "v0.2.8-0.20220513062922-fef589b33ac3" @vcs("release-main")
 }
 
 replace: {

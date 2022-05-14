@@ -1,0 +1,37 @@
+name: Node
+
+on:
+  push:
+    branches:
+      - "main"
+    tags:
+      - 'v*'
+    paths:
+      - nodepkg
+      - package.json
+      - pnpm*.yaml
+
+jobs:
+  node:
+    runs-on: ubuntu-latest
+
+    env:
+      NODE_OPTIONS: --experimental-vm-modules
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          registry-url: 'https://npm.pkg.github.com'
+          node-version: "^18"
+
+      - uses: pnpm/action-setup@v2
+        with:
+          version: "7"
+
+      - run: make node.dep
+      - run: make node.test
+      - run: make node.pub
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

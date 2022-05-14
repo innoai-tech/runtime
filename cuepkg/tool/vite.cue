@@ -55,11 +55,10 @@ import (
 	nodeVersion: string | *"18"
 
 	packages: {
-		"git":        _
-		"alpine-sdk": _
+		"git": _
 	}
 
-	#AlpineBuild & {
-		source: "node:\(nodeVersion)-alpine"
+	#DebianBuild & {
+		source: "node:\(nodeVersion)-\(#DebianVersion)"
 	}
 }

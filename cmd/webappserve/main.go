@@ -17,9 +17,9 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/innoai-tech/webappserve/pkg/appconfig"
-	"github.com/innoai-tech/webappserve/pkg/compress"
-	"github.com/innoai-tech/webappserve/pkg/version"
+	"github.com/innoai-tech/runtime/pkg/appconfig"
+	"github.com/innoai-tech/runtime/pkg/compress"
+	"github.com/innoai-tech/runtime/pkg/version"
 	"github.com/rs/cors"
 	"github.com/spf13/cobra"
 )

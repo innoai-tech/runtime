@@ -1,0 +1,63 @@
+{
+  "name": "@innoai-tech/monobundle",
+  "monobundle": {
+    "build": {
+      "clean": true
+    },
+    "bin": {
+      "monobundle": "./src/bin/index.ts"
+    },
+    "exports": {
+      ".": "./src/index.ts"
+    }
+  },
+  "version": "0.0.0",
+  "license": "MIT",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com",
+    "access": "public"
+  },
+  "dependencies": {
+    "@innoai-tech/lodash": "workspace:*",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^13.3.0",
+    "@babel/plugin-transform-runtime": "^7.17.10",
+    "@babel/types": "^7.17.10",
+    "chalk": "^5.0.1",
+    "del": "^6.0.0",
+    "minimatch": "^5.0.1",
+    "rollup": "^2.73.0",
+    "rollup-plugin-dts": "^4.2.1",
+    "yargs": "^17.5.0",
+    "@babel/runtime-corejs3": "*",
+    "@babel/preset-env": "*"
+  },
+  "devDependencies": {
+    "@types/yargs": "^17.0.10"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.mjs"
+      }
+    }
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "prepublishOnly": "../../../node_modules/.bin/monobundle"
+  },
+  "bin": {
+    "monobundle": "./dist/monobundle.mjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@github.com:innoai-tech/runtime.git",
+    "directory": "nodepkg/@innoai-tech/monobundle"
+  },
+  "type": "module",
+  "types": "./dist/index.d.ts"
+}
