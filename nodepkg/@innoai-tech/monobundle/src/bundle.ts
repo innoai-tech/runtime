@@ -99,7 +99,7 @@ export const bundle = async ({ cwd = process.cwd(), dryRun }: { cwd?: string; dr
   );
 
   const outputBase: OutputOptions = {
-    dir: join(cwd, "dist"),
+    dir: cwd,
     format: "es",
   };
 
@@ -178,7 +178,12 @@ export const bundle = async ({ cwd = process.cwd(), dryRun }: { cwd?: string; dr
   logger.warning("bundling");
 
   if (options.build.clean) {
-    await del([join(cwd, "dist/")]);
+    await del([
+      "*.mjs",
+      "*.d.ts",
+    ], {
+      cwd: cwd,
+    });
   }
 
   let finalFiles: string[] = [];
@@ -225,8 +230,8 @@ export const bundle = async ({ cwd = process.cwd(), dryRun }: { cwd?: string; dr
     const distName = entryAlias(e);
     return {
       import: {
-        types: `./dist/${distName}.d.ts`,
-        default: `./dist/${distName}.mjs`,
+        types: `./${distName}.d.ts`,
+        default: `./${distName}.mjs`,
       },
     };
   });
@@ -234,10 +239,10 @@ export const bundle = async ({ cwd = process.cwd(), dryRun }: { cwd?: string; dr
   const finalPkg = {
     ...pkg,
     type: "module",
-    bin: options.bin ? mapValues(options.bin, (_, name) => `./dist/${name}.mjs`) : undefined,
+    bin: options.bin ? mapValues(options.bin, (_, name) => `./${name}.mjs`) : undefined,
     exports,
     types: exports["."]!["import"]["types"],
-    files: ["dist/"],
+    files: ["*.mjs", "*.d.ts"],
     dependencies: isEmpty(pkg["dependencies"]) ? undefined : (pkg["dependencies"] as { [k: string]: string }),
     peerDependencies: isEmpty(pkg["peerDependencies"])
       ? undefined
@@ -248,5 +253,15 @@ export const bundle = async ({ cwd = process.cwd(), dryRun }: { cwd?: string; dr
     },
   };
 
-  return patchPkg(projectRoot, cwd, finalPkg);
+
+  await patchPkg(projectRoot, cwd, finalPkg);
+
+  await writeFile(
+    join(cwd, ".gitignore"), `
+*.mjs
+*.d.ts
+`,
+  );
+
+  return;
 };

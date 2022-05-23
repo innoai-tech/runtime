@@ -11,14 +11,14 @@
       ".": "./src/index.ts"
     }
   },
-  "version": "0.0.0",
+  "version": "0.1.0",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
     "access": "public"
   },
   "dependencies": {
-    "@innoai-tech/lodash": "workspace:*",
+    "@innoai-tech/lodash": "workspace:^*",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
@@ -39,19 +39,20 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.mjs"
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
       }
     }
   },
   "files": [
-    "dist/"
+    "*.mjs",
+    "*.d.ts"
   ],
   "scripts": {
     "prepublishOnly": "../../../node_modules/.bin/monobundle"
   },
   "bin": {
-    "monobundle": "./dist/monobundle.mjs"
+    "monobundle": "./monobundle.mjs"
   },
   "repository": {
     "type": "git",
@@ -59,5 +60,5 @@
     "directory": "nodepkg/@innoai-tech/monobundle"
   },
   "type": "module",
-  "types": "./dist/index.d.ts"
+  "types": "./index.d.ts"
 }

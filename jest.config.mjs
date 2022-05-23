@@ -4,7 +4,7 @@ export default {
     "^.+\\.[t|j]sx?$": "babel-jest",
   },
   "moduleNameMapper": {
-    "^@innoai-tech/lodash$": "<rootDir>/nodepkg/@innoai-tech/lodash/lodash.mjs",
+    "^@innoai-tech/lodash$": "<rootDir>/nodepkg/@innoai-tech/lodash/index.mjs",
     "^@innoai-tech/([^/]+)$": "<rootDir>/nodepkg/@innoai-tech/$1/src/index.ts",
 
     // TODO remove until fixed https://github.com/facebook/jest/issues/12270

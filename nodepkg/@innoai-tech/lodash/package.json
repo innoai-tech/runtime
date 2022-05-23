@@ -1,6 +1,6 @@
 {
   "name": "@innoai-tech/lodash",
-  "version": "0.0.0",
+  "version": "0.1.1",
   "dependencies": {
     "@types/lodash-es": "^4.17.6",
     "lodash": "^4.17.21",
@@ -16,11 +16,11 @@
     "url": "ssh://git@github.com:innoai-tech/runtime.git",
     "directory": "nodepkg/@innoai-tech/lodash"
   },
-  "types": "./lodash.d.ts",
+  "types": "./index.d.ts",
   "exports": {
     ".": {
-      "import": "./lodash.mjs",
-      "require": "./lodash.cjs"
+      "import": "./index.mjs",
+      "require": "./index.cjs"
     }
   }
 }

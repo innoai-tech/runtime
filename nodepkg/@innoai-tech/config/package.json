@@ -1,6 +1,6 @@
 {
   "name": "@innoai-tech/config",
-  "version": "0.2.2",
+  "version": "0.2.4",
   "monobundle": {
     "env": "browser",
     "exports": {
@@ -13,7 +13,7 @@
     "@babel/runtime-corejs3": "*",
     "vite": "^2.9.9",
     "esbuild": "^0.14.39",
-    "@innoai-tech/lodash": "workspace:*"
+    "@innoai-tech/lodash": "workspace:^*"
   },
   "license": "MIT",
   "publishConfig": {
@@ -24,25 +24,26 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.ts",
-        "default": "./dist/index.mjs"
+        "types": "./index.d.ts",
+        "default": "./index.mjs"
       }
     },
     "./loader": {
       "import": {
-        "types": "./dist/loader.d.ts",
-        "default": "./dist/loader.mjs"
+        "types": "./loader.d.ts",
+        "default": "./loader.mjs"
       }
     },
     "./vite-plugin-inject-config": {
       "import": {
-        "types": "./dist/vite-plugin-inject-config.d.ts",
-        "default": "./dist/vite-plugin-inject-config.mjs"
+        "types": "./vite-plugin-inject-config.d.ts",
+        "default": "./vite-plugin-inject-config.mjs"
       }
     }
   },
   "files": [
-    "dist/"
+    "*.mjs",
+    "*.d.ts"
   ],
   "scripts": {
     "prepublishOnly": "../../../node_modules/.bin/monobundle"
@@ -53,5 +54,5 @@
     "directory": "nodepkg/@innoai-tech/config"
   },
   "type": "module",
-  "types": "./dist/index.d.ts"
+  "types": "./index.d.ts"
 }
