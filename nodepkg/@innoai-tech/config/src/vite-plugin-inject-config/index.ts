@@ -26,7 +26,7 @@ export const injectWebAppConfig = (): Plugin => {
               name: "webapp:base",
               content: stringify({
                 name: conf!.name,
-                env: injectEnabled ? "__ENV__" : appEnv.env,
+                env: injectEnabled ? "__ENV__" : appEnv,
                 version: appVersion,
               }),
             },
