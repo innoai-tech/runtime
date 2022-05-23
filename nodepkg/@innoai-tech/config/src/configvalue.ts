@@ -45,7 +45,7 @@ export const stringify = (o: Config): string => {
   const kvs: string[] = [];
 
   for (const k in o) {
-    let v = o[k]!;
+    let v = o[k] || "";
     if (v.indexOf(",") > -1) {
       v = btoa(v);
     }
