@@ -1,16 +1,19 @@
 {
   "name": "@innoai-tech/config",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "monobundle": {
     "env": "browser",
     "exports": {
       ".": "./src/index.ts",
+      "./loader": "./src/loader/index.ts",
       "./vite-plugin-inject-config": "./src/vite-plugin-inject-config/index.ts"
     }
   },
   "dependencies": {
     "@babel/runtime-corejs3": "*",
-    "vite": "^2.9.9"
+    "vite": "^2.9.9",
+    "esbuild": "^0.14.39",
+    "@innoai-tech/lodash": "workspace:*"
   },
   "license": "MIT",
   "publishConfig": {
@@ -23,6 +26,12 @@
       "import": {
         "types": "./dist/index.d.ts",
         "default": "./dist/index.mjs"
+      }
+    },
+    "./loader": {
+      "import": {
+        "types": "./dist/loader.d.ts",
+        "default": "./dist/loader.mjs"
       }
     },
     "./vite-plugin-inject-config": {

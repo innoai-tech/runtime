@@ -1,13 +1,20 @@
-import { BaseConfig, stringify } from "../";
+import { AppConfig, AppContext, stringify } from "../";
 import type { Plugin } from "vite";
+import { loadConfig } from "../loader";
+import { join } from "path";
 
-export const injectWebAppConfig = (base: BaseConfig, config: { [k: string]: string }): Plugin => {
+export const injectWebAppConfig = (): Plugin => {
   let injectEnabled = false;
+  let conf: (AppConfig & AppContext) | null = null;
+  let appEnv = (process.env as any).APP_ENV || "local";
+  let appVersion = (process.env as any).APP_VERSION || "0.0.0";
+  let appFeature = (process.env as any).APP_FEATURE || "";
 
   return {
     name: "vite-plugin/inject-config",
-    config(_, ce) {
-      injectEnabled = ce.command === "build";
+    async config(c, ce) {
+      injectEnabled = (ce.command === "build");
+      conf = (await loadConfig(join(c.root!, "config.ts")))({ env: injectEnabled ? "$" : appEnv, feature: appFeature });
     },
     transformIndexHtml(html) {
       return {
@@ -18,9 +25,9 @@ export const injectWebAppConfig = (base: BaseConfig, config: { [k: string]: stri
             attrs: {
               name: "webapp:base",
               content: stringify({
-                name: base.name,
-                version: injectEnabled ? (process.env as any).PROJECT_VERSION || "0.0.0" : base.version || "",
-                env: injectEnabled ? "__ENV__" : base.env,
+                name: conf!.name,
+                env: injectEnabled ? "__ENV__" : appEnv.env,
+                version: appVersion,
               }),
             },
           },
@@ -28,7 +35,7 @@ export const injectWebAppConfig = (base: BaseConfig, config: { [k: string]: stri
             tag: "meta",
             attrs: {
               name: "webapp:config",
-              content: injectEnabled ? "__APP_CONFIG__" : stringify(config),
+              content: injectEnabled ? "__APP_CONFIG__" : stringify(conf!.config as any),
             },
           },
         ],

@@ -17,3 +17,18 @@ export const confLoader = <TKeys extends string>() => {
     } as any;
   };
 };
+
+export interface AppContext {
+  env: string,
+  feature: string,
+}
+
+export type ConfigBuilder = (ctx: AppContext) => string;
+
+export interface AppConfig {
+  name: string,
+  group: string,
+  config: { [n: string]: ConfigBuilder | string };
+  manifest: { [k: string]: string }
+}
+
