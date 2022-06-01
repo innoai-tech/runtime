@@ -31,3 +31,6 @@ node.build: node.dep
 
 node.pub:
 	pnpm -r publish --no-git-checks
+
+cue.test:
+	cuem eval -o test.yaml ./cuepkg/kube/test
