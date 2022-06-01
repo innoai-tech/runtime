@@ -10,7 +10,24 @@ import (
 }
 
 {
-	"Simple": {
+	"As Kubepkg": {
+		actual: kube.#KubePkg & {
+			namespace: "test"
+			app:       Simple.actual
+		}
+
+		expect: "should render": {
+			"images": _|_ != (actual.kube.spec.images & {
+				"docker.io/libary/nginx:alpine": ""
+			})
+			"version":    actual.kube.spec.version == Simple.actual.app.version
+			"deployment": actual.kube.spec.manifests.deployments.web.metadata.namespace == "test"
+			"services":   actual.kube.spec.manifests.services.web.metadata.namespace == "test"
+			"ingress":    actual.kube.spec.manifests.ingresses.web.metadata.namespace == "test"
+		}
+	}
+
+	Simple: {
 		actual: kube.#App & {
 			app: {
 				name:    "web"
