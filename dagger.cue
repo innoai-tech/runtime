@@ -6,7 +6,8 @@ import (
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
-	"github.com/innoai-tech/webappserve/cuepkg/tool"
+
+	"github.com/innoai-tech/runtime/cuepkg/tool"
 )
 
 dagger.#Plan & {

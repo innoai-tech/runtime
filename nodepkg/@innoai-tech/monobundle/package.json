@@ -18,20 +18,20 @@
     "access": "public"
   },
   "dependencies": {
+    "@babel/plugin-transform-runtime": "^7.18.2",
+    "@babel/preset-env": "*",
+    "@babel/runtime-corejs3": "*",
+    "@babel/types": "^7.18.4",
     "@innoai-tech/lodash": "workspace:^*",
     "@rollup/plugin-babel": "^5.3.1",
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^13.3.0",
-    "@babel/plugin-transform-runtime": "^7.17.10",
-    "@babel/types": "^7.17.10",
     "chalk": "^5.0.1",
-    "del": "^6.0.0",
-    "minimatch": "^5.0.1",
-    "rollup": "^2.73.0",
-    "rollup-plugin-dts": "^4.2.1",
-    "yargs": "^17.5.0",
-    "@babel/runtime-corejs3": "*",
-    "@babel/preset-env": "*"
+    "del": "^6.1.1",
+    "minimatch": "^5.1.0",
+    "rollup": "^2.75.5",
+    "rollup-plugin-dts": "^4.2.2",
+    "yargs": "^17.5.1"
   },
   "devDependencies": {
     "@types/yargs": "^17.0.10"

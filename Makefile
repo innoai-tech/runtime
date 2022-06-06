@@ -15,7 +15,7 @@ go.tidy:
 	go mod tidy
 
 node.dep:
-	pnpm install
+	pnpm install --config.auto-install-peers=true
 
 node.upgrade:
 	pnpm up -r --latest

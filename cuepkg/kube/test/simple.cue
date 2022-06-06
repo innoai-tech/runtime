@@ -66,6 +66,7 @@ import (
 				name:     "http"
 				protocol: "TCP"
 				port:     80
+				targetPort: "http"
 			})
 		}
 

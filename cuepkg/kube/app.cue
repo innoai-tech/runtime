@@ -82,7 +82,8 @@ import (
 
 				spec: ports: [
 					for n, port in s.ports {
-						name: n
+						name:       n
+						targetPort: n
 
 						[
 							if strings.HasPrefix(s.name, "udp") {
