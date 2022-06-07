@@ -2,6 +2,7 @@ package test
 
 import (
 	"github.com/innoai-tech/runtime/cuepkg/kube"
+	"github.com/innoai-tech/runtime/cuepkg/kubepkg"
 )
 
 [Context=string]: {
@@ -11,19 +12,19 @@ import (
 
 {
 	"As Kubepkg": {
-		actual: kube.#KubePkg & {
+		actual: (kubepkg.#FromKubeApp & {
 			namespace: "test"
-			app:       Simple.actual
-		}
+			kubeapp:   Simple.actual
+		}).output
 
 		expect: "should render": {
-			"images": _|_ != (actual.kube.spec.images & {
+			"images": _|_ != (actual.spec.images & {
 				"docker.io/libary/nginx:alpine": ""
 			})
-			"version":    actual.kube.spec.version == Simple.actual.app.version
-			"deployment": actual.kube.spec.manifests.deployments.web.metadata.namespace == "test"
-			"services":   actual.kube.spec.manifests.services.web.metadata.namespace == "test"
-			"ingress":    actual.kube.spec.manifests.ingresses.web.metadata.namespace == "test"
+			"version":    actual.spec.version == Simple.actual.app.version
+			"deployment": actual.spec.manifests.deployments.web.metadata.namespace == "test"
+			"services":   actual.spec.manifests.services.web.metadata.namespace == "test"
+			"ingress":    actual.spec.manifests.ingresses.web.metadata.namespace == "test"
 		}
 	}
 
@@ -63,9 +64,9 @@ import (
 
 		expect: "services.web should render": {
 			"service.spec.ports should render correct": _|_ != (actual.kube.services.web.spec.ports[0] & {
-				name:     "http"
-				protocol: "TCP"
-				port:     80
+				name:       "http"
+				protocol:   "TCP"
+				port:       80
 				targetPort: "http"
 			})
 		}
