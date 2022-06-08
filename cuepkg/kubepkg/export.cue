@@ -6,12 +6,11 @@ import (
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
-	"github.com/innoai-tech/runtime/cuepkg/kube"
 )
 
 #Export: {
 	filename: string
-	kubepkg:  kube.#KubePkg
+	kubepkg:  #KubePkg
 	arch:     string
 	env:      docker.#Run.env
 
@@ -22,7 +21,7 @@ import (
 	_files: {
 		"/src/kubepkg.json": {
 			path:     "kubepkg.json"
-			contents: json.Marshal(kubepkg.kube)
+			contents: json.Marshal(kubepkg)
 		}
 	}
 
@@ -52,7 +51,7 @@ import (
 			args: [
 				"--storage-root=/etc/kubepkg",
 				"--platform=linux/\(arch)",
-				"--extract-manifests-yaml=/build/manifests/\(kubepkg.kube.metadata.name).yaml",
+				"--extract-manifests-yaml=/build/manifests/\(kubepkg.metadata.name).yaml",
 				"--output=/build/images/\(filename)",
 				"/src/kubepkg.json",
 			]
