@@ -32,11 +32,11 @@ import (
 		metadata: name:        kubeapp.app.name
 
 		if len(kubeapp.platforms) > 0 {
-			metadata: annotations: "octohelm.tech/platform": strings.json(kubeapp.platforms, ",")
+			metadata: annotations: "octohelm.tech/platform": strings.Join(kubeapp.platforms, ",")
 		}
 
 		spec: {
-			version: kubeapp.app.versionxz
+			version: kubeapp.app.version
 			images: {
 				for n, c in kubeapp.containers {
 					"\(c.image.name):\(c.image.tag)": ""
