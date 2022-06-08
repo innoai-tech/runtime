@@ -35,6 +35,10 @@ import (
 				version: "alpine"
 			}
 
+			platforms: [
+				"linux/amd64",
+			]
+
 			services: "\(app.name)": {
 				selector: "app": "\(app.name)"
 				ports: containers.web.ports

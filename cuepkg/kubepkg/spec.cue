@@ -1,6 +1,8 @@
 package kubepkg
 
 import (
+	"strings"
+
 	"github.com/innoai-tech/runtime/cuepkg/kube"
 )
 
@@ -10,6 +12,8 @@ import (
 
 	metadata: namespace: string
 	metadata: name:      string
+	metadata: labels: [N=string]:      string
+	metadata: annotations: [N=string]: string
 
 	spec: {
 		version: string
@@ -25,9 +29,14 @@ import (
 	output: #KubePkg & {
 		metadata: "namespace": namespace
 		metadata: name:        kubeapp.app.name
+		metadata: name:        kubeapp.app.name
+
+		if len(kubeapp.platforms) > 0 {
+			metadata: annotations: "octohelm.tech/platform": strings.json(kubeapp.platforms, ",")
+		}
 
 		spec: {
-			version: kubeapp.app.version
+			version: kubeapp.app.versionxz
 			images: {
 				for n, c in kubeapp.containers {
 					"\(c.image.name):\(c.image.tag)": ""

@@ -10,6 +10,8 @@ import (
 		version: string
 	}
 
+	platforms: [...string] | *["linux/amd64", "linux/arm64"]
+
 	config: [Name=string]: string
 
 	containers: [Name=string]: #Container & {
@@ -134,25 +136,45 @@ import (
 		}[type])": "\(app.name)": {
 			spec: "replicas": replicas
 
-			spec: template: spec: "containers": [
-				for _, c in containers {
-					(_fromContainer & {
-						"container": c
-						"volumes":   volumes
-					}).kube
-				},
-			]
+			spec: template: spec: {
+				"containers": [
+					for _, c in containers {
+						(_fromContainer & {
+							"container": c
+							"volumes":   volumes
+						}).kube
+					},
+				]
 
-			spec: template: spec: "volumes": [
-				for n, vol in volumes {
-					name: n
-					"\(vol.source.type)": {
-						for k, v in vol.source if !(k == "type" || k == "spec") {
-							"\(k)": v
+				"volumes": [
+					for n, vol in volumes {
+						name: n
+						"\(vol.source.type)": {
+							for k, v in vol.source if !(k == "type" || k == "spec") {
+								"\(k)": v
+							}
 						}
-					}
-				},
-			]
+					},
+				]
+			}
+
+			if len(platforms) > 0 {
+				spec: template: spec: affinity: nodeAffinity: requiredDuringSchedulingIgnoredDuringExecution: nodeSelectorTerms: [
+					{
+						matchExpressions: [
+							{
+								key:      "kubernetes.io/arch"
+								operator: "In"
+								values: [
+									for p in platforms {
+										"\(strings.Split(p, "/")[1])"
+									},
+								]
+							},
+						]
+					},
+				]
+			}
 
 			if serviceAccount != _|_ {
 				spec: template: spec: serviceAccount: app.name
