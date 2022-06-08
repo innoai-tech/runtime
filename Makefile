@@ -34,3 +34,6 @@ node.pub:
 
 cue.test:
 	cuem eval -o test.yaml ./cuepkg/kube/test
+
+cue.test.tool:
+	cuem eval -o test.yaml ./cuepkg/tool/test

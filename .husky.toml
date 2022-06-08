@@ -1,6 +1,5 @@
 version-file = "pkg/version/version"
 
-[hooks]
 pre-commit = [
     "golangci-lint run",
     "husky lint-staged"
