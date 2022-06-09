@@ -18,20 +18,16 @@ import (
 		input: dagger.#Scratch
 	}
 
-	_files: {
-		"/src/kubepkg.json": {
-			path:     "kubepkg.json"
-			contents: json.Marshal(kubepkg)
-		}
+	_files: "/src/kubepkg.json": {
+		path:     "kubepkg.json"
+		contents: json.Marshal(kubepkg)
 	}
 
-	_caches: {
-		kubepkg_cache: core.#Mount & {
-			dest:     "/etc/kubepkg"
-			contents: core.#CacheDir & {
-				id:          "kubepkg_cache"
-				concurrency: "locked"
-			}
+	_caches: kubepkg_cache: core.#Mount & {
+		dest:     "/etc/kubepkg"
+		contents: core.#CacheDir & {
+			id:          "kubepkg_cache"
+			concurrency: "locked"
 		}
 	}
 

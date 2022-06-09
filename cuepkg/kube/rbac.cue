@@ -24,14 +24,14 @@ _fromServiceAccount: {
 
 				clusterRoleBindings: "\(name)": rbac_v1.#ClusterRoleBinding & {
 					subjects: [{
-						"kind":      "ServiceAccount"
-						"name":      name
-						"namespace": serviceAccounts["\(name)"].metadata.namespace
+						kind:      "ServiceAccount"
+						"name":    name
+						namespace: serviceAccounts["\(name)"].metadata.namespace
 					}]
 					roleRef: {
-						"kind":     "ClusterRole"
-						"name":     name
-						"apiGroup": "rbac.authorization.k8s.io"
+						kind:     "ClusterRole"
+						"name":   name
+						apiGroup: "rbac.authorization.k8s.io"
 					}
 				}
 			}
@@ -44,14 +44,14 @@ _fromServiceAccount: {
 				}
 				roleBindings: "\(name)": rbac_v1.#RoleBinding & {
 					subjects: [{
-						"kind":      "ServiceAccount"
-						"name":      "\(name)"
-						"namespace": serviceAccounts["\(name)"].metadata.namespace
+						kind:      "ServiceAccount"
+						"name":    "\(name)"
+						namespace: serviceAccounts["\(name)"].metadata.namespace
 					}]
 					roleRef: {
-						"kind":     "Role"
-						"name":     "\(name)"
-						"apiGroup": "rbac.authorization.k8s.io"
+						kind:     "Role"
+						"name":   "\(name)"
+						apiGroup: "rbac.authorization.k8s.io"
 					}
 				}
 			}

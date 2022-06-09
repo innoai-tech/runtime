@@ -43,9 +43,7 @@ import (
 				}
 			}
 			manifests: (kubeapp.kube & {
-				"namespace": {
-					metadata: name: namespace
-				}
+				"namespace": metadata: name: namespace
 			})
 		}
 	}

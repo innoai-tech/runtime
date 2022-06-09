@@ -5,7 +5,7 @@ import (
 )
 
 {
-	"MountVolume": {
+	MountVolume: {
 		actual: kube.#App & {
 			app: {
 				name:    "web"
@@ -17,32 +17,28 @@ import (
 				ports: containers.web.ports
 			}
 
-			containers: "web": {
+			containers: web: {
 				image: {
 					name: "docker.io/libary/nginx"
 					tag:  app.name
 				}
-				ports: "http": 80
+				ports: http: 80
 			}
 
-			volumes: "html": {
+			volumes: html: {
 				mountPath: "/etc/nginx/html"
 				source: {
 					type: "configMap"
 					name: "\(app.name)-html"
-					spec: {
-						data: {
-							"index.html": "<div>hello</div>"
-						}
-					}
+					spec: data: "index.html": "<div>hello</div>"
 				}
 			}
 		}
 
 		expect: "manifests should render": {
-			"deployment": actual.kube.deployments.web != _|_
-			"services":   actual.kube.services.web != _|_
-			"configMaps": actual.kube.configMaps."web-html" != _|_
+			deployment: actual.kube.deployments.web != _|_
+			services:   actual.kube.services.web != _|_
+			configMaps: actual.kube.configMaps."web-html" != _|_
 		}
 
 		expect: {
@@ -55,9 +51,7 @@ import (
 			})
 			"containers[0].volumeMounts[0] should be web": _|_ != (actual.kube.deployments.web.spec.template.spec.volumes[0] & {
 				name: "html"
-				configMap: {
-					name: "web-html"
-				}
+				configMap: name: "web-html"
 			})
 		}
 	}

@@ -54,27 +54,24 @@ import (
 		for name, s in services {
 			if (s.expose != _|_) {
 				if s.expose.type == "Ingress" {
-					ingresses: "\(name)": {
-						spec: rules: [{
-							host: s.expose.host
-							http: paths: [
-								for portName, p in s.expose.paths {
-									{
-										pathType: "Exact"
-										path:     p
-										backend: service: {
-											"name": name
-											"port": "name": portName
-										}
+					ingresses: "\(name)": spec: rules: [{
+						host: s.expose.host
+						http: paths: [
+							for portName, p in s.expose.paths {
+								{
+									pathType: "Exact"
+									path:     p
+									backend: service: {
+										"name": name
+										port: name: portName
 									}
-								},
-							]
-						}]
-					}
+								}
+							},
+						]
+					}]
 				}
 			}
-
-			"services": "\(name)": {
+			services: "\(name)": {
 				let isNodePort = [
 					if (s.expose != _|_ ) if s.expose.type == "NodePort" {true},
 					false,
@@ -99,7 +96,7 @@ import (
 								"port": port
 
 								if isNodePort {
-									"nodePort": port
+									nodePort: port
 								}
 							}
 						}
@@ -140,8 +137,8 @@ import (
 				"containers": [
 					for _, c in containers {
 						(_fromContainer & {
-							"container": c
-							"volumes":   volumes
+							container: c
+							"volumes": volumes
 						}).kube
 					},
 				]
@@ -183,7 +180,7 @@ import (
 
 		if serviceAccount != _|_ {
 			(_fromServiceAccount & {
-				"name":           app.name
+				name:             app.name
 				"serviceAccount": serviceAccount
 			}).kube
 		}

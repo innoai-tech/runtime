@@ -79,14 +79,10 @@ _fromContainer: {
 										}
 									},
 									if _type == "field" {
-										fieldRef: {
-											fieldPath: _ref
-										}
+										fieldRef: fieldPath: _ref
 									},
 									if _type == "resourceField" {
-										resourceFieldRef: {
-											resource: _ref
-										}
+										resourceFieldRef: resource: _ref
 									},
 								][0]
 							}
@@ -114,9 +110,7 @@ _fromContainer: {
 }
 
 #ProbeHttpGet: core_v1.#Probe & {
-	httpGet: {
-		scheme: _ | *"HTTP"
-	}
+	httpGet: scheme: _ | *"HTTP"
 	initialDelaySeconds: _ | *5
 	timeoutSeconds:      _ | *1
 	periodSeconds:       _ | *10

@@ -17,11 +17,9 @@ import (
 		input: dagger.#Scratch
 	}
 
-	_files: {
-		"/src/kubepkg.json": {
-			path:     "kubepkg.json"
-			contents: json.Marshal(kubepkg)
-		}
+	_files: "/src/kubepkg.json": {
+		path:     "kubepkg.json"
+		contents: json.Marshal(kubepkg)
 	}
 
 	#Run & {

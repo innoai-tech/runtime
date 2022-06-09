@@ -67,27 +67,27 @@ import (
 
 	// rbac
 	serviceAccounts: [Name=string]: core_v1.#ServiceAccount & {
-		metadata: "name":      Name
+		metadata: name:        Name
 		metadata: "namespace": namespace.metadata.name
 	}
 
 	clusterRoles: [Name=string]: rbac_v1.#ClusterRole & {
-		metadata: "name":      Name
+		metadata: name:        Name
 		metadata: "namespace": namespace.metadata.name
 	}
 
 	clusterRoleBindings: [Name=string]: rbac_v1.#ClusterRoleBinding & {
-		metadata: "name":      Name
+		metadata: name:        Name
 		metadata: "namespace": namespace.metadata.name
 	}
 
 	roles: [Name=string]: rbac_v1.#Role & {
-		metadata: "name":      Name
+		metadata: name:        Name
 		metadata: "namespace": namespace.metadata.name
 	}
 
 	roleBindings: [Name=string]: rbac_v1.#RoleBinding & {
-		metadata: "name":      Name
+		metadata: name:        Name
 		metadata: "namespace": namespace.metadata.name
 	}
 }
