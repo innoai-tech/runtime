@@ -16,7 +16,7 @@ import (
 #Build: {
 	source:    string | *"index.docker.io/debian:\(#Version)-slim"
 	platform?: string
-	mirror?: string
+	mirror?:   string
 	packages: [pkgName=string]: string | *""
 
 	_build: docker.#Build & {
@@ -29,12 +29,16 @@ import (
 			},
 			if mirror != _|_ {
 				docker.#Run & {
-					command: {
-						name: "sh"
-						flags: "-c": """
+					_script: [
+							if mirror != "" {"""
 						sed -i "s@http://deb.debian.org@\(mirror)@g" /etc/apt/sources.list
 						sed -i "s@http://security.debian.org@\(mirror)@g" /etc/apt/sources.list
-						"""
+						"""},
+							"env",
+					][0]
+					command: {
+						name: "sh"
+						flags: "-c": _script
 					}
 				}
 			},
