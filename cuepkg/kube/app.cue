@@ -14,6 +14,19 @@ import (
 
 	config: [Name=string]: string
 
+	initContainers: [Name=string]: #Container & {
+		name: Name
+
+		for n, v in config {
+			[
+				if strings.HasSuffix(strings.ToUpper(n), "PASSWORD") {
+					{env: "\(n)": from: secret: "\(app.name)": "\(n)"}
+				},
+				{env: "\(n)": from: configMap: "\(app.name)": "\(n)"},
+			][0]
+		}
+	}
+
 	containers: [Name=string]: #Container & {
 		name: Name
 
@@ -134,6 +147,15 @@ import (
 			spec: "replicas": replicas
 
 			spec: template: spec: {
+				"initContainers": [
+					for _, c in initContainers {
+						(_fromContainer & {
+							container: c
+							"volumes": volumes
+						}).kube
+					},
+				]
+
 				"containers": [
 					for _, c in containers {
 						(_fromContainer & {
