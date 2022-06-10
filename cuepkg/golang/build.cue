@@ -71,7 +71,7 @@ import (
 
 	for _os in go.os for _arch in go.arch {
 		"\(_os)/\(_arch)": {
-			_build: docker.#Run & {
+			_run: docker.#Run & {
 				workdir: run.workdir
 				mounts: {
 					run.mounts
@@ -89,10 +89,16 @@ import (
 					"-o", "/output/\(go.name)",
 					"\(go.package)",
 				]
-				export: directories: "/output": _
 			}
 
-			output: _build.export.directories."/output"
+			_copy: core.#Copy & {
+				input:    dagger.#Scratch
+				contents: _run.output.rootfs
+				source:   "/output"
+				dest:     "/"
+			}
+
+			output: _copy.output
 		}
 	}
 
@@ -106,7 +112,7 @@ import (
 					"platform": "\(_os)/\(_arch)"
 				}
 
-				_build: input: _image.output
+				_run: input: _image.output
 			}
 		}
 	}
@@ -118,7 +124,7 @@ import (
 
 		for _os in go.os for _arch in go.arch {
 			"\(_os)/\(_arch)": {
-				_build: input: _image.output
+				_run: input: _image.output
 			}
 		}
 	}

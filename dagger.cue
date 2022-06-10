@@ -30,6 +30,16 @@ dagger.#Plan & {
 		}
 
 		filesystem: "build/output": write: contents: actions.export.output
+
+		filesystem: {
+			_archs: ["amd64", "arm64"]
+
+			for arch in _archs {
+				"build/dump/\(arch)": {
+					write: contents: actions.shipfs.dump["linux/\(arch)"].output
+				}
+			}
+		}
 	}
 
 	actions: {
@@ -78,56 +88,103 @@ dagger.#Plan & {
 			}
 		}
 
-		ship: {
-			images: {
-				for arch in build.go.arch {
-					"linux/\(arch)": docker.#Build & {
-						steps: [
-							debian.#Build & {
-								platform: "linux/\(arch)"
-								mirror:   client.env.LINUX_MIRROR
-								packages: {
-									"ca-certificates": _
+		images: {
+			for arch in build.go.arch {
+				"linux/\(arch)": docker.#Build & {
+					steps: [
+						debian.#Build & {
+							platform: "linux/\(arch)"
+							mirror:   client.env.LINUX_MIRROR
+							packages: {
+								"ca-certificates": _
+							}
+						},
+						docker.#Set & {
+							config: {
+								label: {
+									"org.opencontainers.image.source":   "https://\(info.module)"
+									"org.opencontainers.image.revision": "\(client.env.GIT_SHA)"
 								}
-							},
-							docker.#Copy & {
-								contents: build["linux/\(arch)"].output
-								source:   "./webappserve"
-								dest:     "/webappserve"
-							},
-							docker.#Set & {
-								config: {
-									label: {
-										"org.opencontainers.image.source":   "https://\(info.module)"
-										"org.opencontainers.image.revision": "\(client.env.GIT_SHA)"
-									}
-									env: {
-										APP_ROOT: "/app"
-										ENV:      ""
-									}
-									workdir: "/"
-									entrypoint: ["/webappserve"]
+								env: {
+									APP_ROOT: "/app"
+									ENV:      ""
 								}
-							},
-						]
-					}
+								workdir: "/"
+								entrypoint: ["/webappserve"]
+							}
+						},
+					]
 				}
 			}
+		}
+
+		#Ship: {
+			images: [P=string]: docker.#Image
 
 			_push: docker.#Push & {
-				dest: "\(strings.Replace(info.module, "github.com/", "ghcr.io/", -1)):\(version)"
-				"images": {
-					for p, image in images {
-						"\(p)": image.output
-					}
-				}
-				auth: {
+				"dest":   "\(strings.Replace(info.module, "github.com/", "ghcr.io/", -1))/webappserve:\(version)"
+				"images": images
+				"auth": {
 					username: client.env.GH_USERNAME
 					secret:   client.env.GH_PASSWORD
 				}
 			}
 
 			result: _push.result
+		}
+
+		ship: #Ship & {
+			_images: {
+				for p, image in images {
+					"\(p)": docker.#Copy & {
+						input:    image.output
+						contents: build["\(p)"].output
+						source:   "./webappserve"
+						dest:     "/webappserve"
+					}
+				}
+			}
+
+			"images": {
+				for p, image in _images {
+					"\(p)": image.output
+				}
+			}
+		}
+
+		shipfs: {
+			dump: {
+				for arch in build.go.arch {
+					"linux/\(arch)": build["linux/\(arch)"]
+				}
+			}
+
+			create: #Ship & {
+				_dumps: {
+					for arch in build.go.arch {
+						"linux/\(arch)": core.#Source & {
+							path: "build/dump/\(arch)"
+						}
+					}
+				}
+
+				_images: {
+					for p, image in images {
+						"\(p)": docker.#Copy & {
+							input:    image.output
+							contents: _dumps["\(p)"].output
+							source:   "./webappserve"
+							dest:     "/webappserve"
+						}
+					}
+				}
+
+				"images": {
+					for p, image in _images {
+						"\(p)": image.output
+					}
+				}
+			}
 		}
 	}
 }

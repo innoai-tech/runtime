@@ -57,8 +57,14 @@ import (
 				./node_modules/.bin/vite build --mode=production --config=\(vite.config) --outDir=/output
 				"""
 		}
-		export: directories: "/output": _
 	}
 
-	output: _run.export.directories."/output"
+	_copy: core.#Copy & {
+		input:    dagger.#Scratch
+		contents: _run.output.rootfs
+		source:   "/output"
+		dest:     "/"
+	}
+
+	output: _copy.output
 }

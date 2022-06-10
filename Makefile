@@ -8,6 +8,11 @@ build:
 ship:
 	dagger do ship
 
+shipfs:
+	#dagger do shipfs dump linux\/amd64
+	#dagger do shipfs dump linux\/arm64
+	dagger do shipfs create
+
 go.test:
 	go test -v -race ./pkg/...
 
