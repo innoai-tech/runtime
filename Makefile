@@ -3,10 +3,10 @@ export GIT_REF ?= HEAD
 
 .PHONY: build
 build:
-	dagger do build
+	dagger do export
 
-push:
-	dagger do push
+ship:
+	dagger do ship
 
 go.test:
 	go test -v -race ./pkg/...
