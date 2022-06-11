@@ -1,6 +1,8 @@
 package tool
 
 import (
+	"path"
+
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
@@ -16,21 +18,21 @@ import (
 	}
 
 	_run: docker.#Run & {
-		input:   _busybox.output
-		workdir: "/output"
+		input: _busybox.output
 		mounts: {
 			"dir": core.#Mount & {
 				"contents": contents
-				"dest":     dest
+				"dest":     "\(dest)"
 				"source":   "/"
 			}
 		}
+		workdir: "\(dest)"
 		command: {
-			name: "tar"
-			args: [
-				"-czf", "/output\(dest).tar.gz",
-				"-C", "\(dest)", "\(dest)",
-			]
+			name: "sh"
+			flags: "-c": """
+			mkdir -p /output
+			tar -czf /output/\(path.Base(dest)).tar.gz -C \(dest) .
+			"""
 		}
 	}
 
