@@ -1,11 +1,11 @@
 {
-  "name": "@innoai-tech/fetcher",
+  "name": "@innoai-tech/reactutil",
   "monobundle": {
     "exports": {
       ".": "./src/index.ts"
     }
   },
-  "version": "0.1.2",
+  "version": "0.2.3",
   "license": "MIT",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com",
@@ -13,9 +13,11 @@
   },
   "peerDependencies": {
     "rxjs": "7.x",
+    "react": "18.x",
     "@babel/runtime-corejs3": "*"
   },
   "dependencies": {
+    "@innoai-tech/fetcher": "workspace:*",
     "@innoai-tech/lodash": "workspace:*"
   },
   "exports": {
@@ -37,7 +39,7 @@
   "repository": {
     "type": "git",
     "url": "ssh://git@github.com:innoai-tech/runtime.git",
-    "directory": "nodepkg/@innoai-tech/fetcher"
+    "directory": "nodepkg/@innoai-tech/reactutil"
   },
   "type": "module",
   "types": "./index.d.ts"
