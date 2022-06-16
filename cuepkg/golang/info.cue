@@ -15,6 +15,6 @@ import (
 		path:  "go.mod"
 	}
 
-	go:     regexp.FindSubmatch(#"go (.+)\n"#, _gomod.contents)[1]
 	module: regexp.FindSubmatch(#"module (.+)\n"#, _gomod.contents)[1]
+	go:     regexp.FindSubmatch(#"\ngo (.+)\n?"#, _gomod.contents)[1]
 }

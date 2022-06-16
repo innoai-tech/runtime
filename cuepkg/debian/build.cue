@@ -16,9 +16,10 @@ import (
 #Build: {
 	source:    string | *"index.docker.io/debian:\(#Version)-slim"
 	platform?: string
-	mirror?:   string
-	packages: [pkgName=string]: string | *""
 	steps: [...docker.#Step]
+
+	packages: [pkgName=string]: string | *""
+	mirror: string | *""
 
 	_build: docker.#Build & {
 		"steps": [
@@ -28,26 +29,20 @@ import (
 					"platform": platform
 				}
 			},
-			if mirror != _|_ && len(packages) > 0 {
-				docker.#Run & {
-					_script: [
-							if mirror != "" {"""
-						sed -i "s@http://deb.debian.org@\(mirror)@g" /etc/apt/sources.list
-						sed -i "s@http://security.debian.org@\(mirror)@g" /etc/apt/sources.list
-						"""},
-							"env",
-					][0]
-					command: {
-						name: "sh"
-						flags: "-c": _script
-					}
-				}
-			},
 			if len(packages) > 0 {
 				docker.#Run & {
+					env: {
+						LINUX_MIRROR: mirror
+					}
 					command: {
 						name: "sh"
 						flags: "-c": strings.Join([
+								"""
+								if [ ${LINUX_MIRROR} != "" ]; then
+									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+								fi
+								""",
 								"apt-get update -y",
 								for _pkgName, _version in packages {"apt-get install -y -f \(_pkgName)\(_version)"},
 								"rm -rf /var/lib/apt/lists/*",
@@ -55,8 +50,45 @@ import (
 					}
 				}
 			},
-			for _, step in steps {
+			for step in steps {
 				step
+			},
+		]
+	}
+
+	output: _build.output
+}
+
+#InstallPackage: {
+	input: docker.#Image | *docker.#Scratch
+	packages: [pkgName=string]: string | *""
+	mirror?: string
+
+	_build: docker.#Build & {
+		steps: [
+			{
+				output: input
+			},
+			if len(packages) > 0 {
+				docker.#Run & {
+					env: {
+						LINUX_MIRROR: mirror
+					}
+					command: {
+						name: "sh"
+						flags: "-c": strings.Join([
+								"""
+								if [ ${LINUX_MIRROR} != "" ]; then
+									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+								fi
+								""",
+								"apt-get update -y",
+								for _pkgName, _version in packages {"apt-get install -y -f \(_pkgName)\(_version)"},
+								"rm -rf /var/lib/apt/lists/*",
+						], "\n")
+					}
+				}
 			},
 		]
 	}

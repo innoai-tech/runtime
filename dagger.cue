@@ -43,32 +43,32 @@ dagger.#Plan & {
 	}
 
 	actions: {
-		version: (tool.#ResolveVersion & {ref: client.env.GIT_REF, version: "\(client.env.VERSION)"}).output
-
-		src: core.#Source & {
-			path: "."
-			include: [
-				"cmd/",
-				"pkg/",
-				"go.mod",
-				"go.sum",
-			]
+		version: tool.#ResolveVersion & {
+			ref: client.env.GIT_REF, version: "\(client.env.VERSION)"
 		}
 
-		info: golang.#Info & {
-			"source": src.output
+		src: {
+			go: core.#Source & {
+				path: "."
+				include: [
+					"cmd/",
+					"pkg/",
+					"go.mod",
+					"go.sum",
+				]
+			}
 		}
 
 		build: golang.#Build & {
-			source: src.output
+			source: src.go.output
 			go: {
 				os: ["linux", "darwin"]
 				arch: ["amd64", "arm64"]
 				package: "./cmd/webappserve"
 				ldflags: [
 					"-s -w",
-					"-X \(info.module)/pkg/version.Version=\(version)",
-					"-X \(info.module)/pkg/version.Revision=\(client.env.GIT_SHA)",
+					"-X \(go.module)/pkg/version.Version=\(version.output)",
+					"-X \(go.module)/pkg/version.Revision=\(client.env.GIT_SHA)",
 				]
 			}
 			run: env: {
@@ -76,7 +76,7 @@ dagger.#Plan & {
 				GOPRIVATE: client.env.GOPRIVATE
 				GOSUMDB:   client.env.GOSUMDB
 			}
-			image: mirror: client.env.LINUX_MIRROR
+			//   image: mirror: "\(client.env.LINUX_MIRROR)"
 		}
 
 		export: tool.#Export & {
@@ -102,7 +102,7 @@ dagger.#Plan & {
 						docker.#Set & {
 							config: {
 								label: {
-									"org.opencontainers.image.source":   "https://\(info.module)"
+									"org.opencontainers.image.source":   "https://\(build.go.module)"
 									"org.opencontainers.image.revision": "\(client.env.GIT_SHA)"
 								}
 								env: {
@@ -122,7 +122,7 @@ dagger.#Plan & {
 			images: [P=string]: docker.#Image
 
 			_push: docker.#Push & {
-				"dest":   "\(strings.Replace(info.module, "github.com/", "ghcr.io/", -1))/webappserve:\(version)"
+				"dest":   "\(strings.Replace(build.go.module, "github.com/", "ghcr.io/", -1))/webappserve:\(version.output)"
 				"images": images
 				"auth": {
 					username: client.env.GH_USERNAME

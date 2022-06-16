@@ -21,15 +21,21 @@ dagger.#Plan & {
 			path:     "test"
 			contents: "test"
 		}
-		img: debian.#Build & {
-			mirror: "\(client.env.LINUX_MIRROR)"
-			steps: [
-				docker.#Copy & {
-					contents: testfile.output
-					source:   testfile.path
-					dest:     "/etc/test"
-				},
-			]
+
+		img: {
+			packages: git: ""
+
+			debian.#Build & {
+				mirror:     "\(client.env.LINUX_MIRROR)"
+				"packages": packages
+				steps: [
+					docker.#Copy & {
+						contents: testfile.output
+						source:   testfile.path
+						dest:     "/etc/test"
+					},
+				]
+			}
 		}
 
 		inimage: core.#ReadFile & {

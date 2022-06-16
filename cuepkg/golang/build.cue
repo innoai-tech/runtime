@@ -9,6 +9,17 @@ import (
 	"universe.dagger.io/docker"
 )
 
+#Go: {
+	version: string
+	module:  string
+	package: string | *"."
+	name:    string | *path.Base(package)
+	os: [...string]
+	arch: [...string]
+	cgo:     bool | *false
+	ldflags: *["-x -w"] | [...string]
+}
+
 #Build: {
 	source: dagger.#FS
 
@@ -16,18 +27,16 @@ import (
 		"source": source
 	}
 
+	go: #Go
 	go: {
 		version: _gomod.go
 		module:  _gomod.module
-		package: string
-		name:    string | *path.Base(go.package)
-		os: [...string]
-		arch: [...string]
-		cgo:     bool | *false
-		ldflags: *["-x -w"] | [...string]
 	}
 
 	run: {
+		prebuild: {
+			scripts: [...string]
+		}
 		workdir: "/go/src"
 		mounts: [Name=string]: core.#Mount
 		env: [Name=string]:    string | dagger.#Secret
@@ -72,24 +81,37 @@ import (
 
 	for _os in go.os for _arch in go.arch {
 		"\(_os)/\(_arch)": {
-			_run: docker.#Run & {
-				workdir: run.workdir
-				mounts: {
-					run.mounts
-					_cachesMounts
-				}
-				env: {
-					run.env
-					GOOS:   _os
-					GOARCH: _arch
-				}
-				command: name: "go"
-				command: args: [
-					"build",
-					"-ldflags", strings.Join(go.ldflags, " "),
-					"-o", "/output/\(go.name)",
-					"\(go.package)",
+			_run: {
+				_scripts: [
+					for script in run.prebuild.scripts {
+						script
+					},
+					"go build -ldflags=\"\(strings.Join(go.ldflags, " "))\" -o /output/\(go.name) \(go.package)",
 				]
+
+				input: docker.#Image
+
+				docker.#Build & {
+					steps: [
+						{output: input},
+						for i, script in _scripts {
+							docker.#Run & {
+								workdir: run.workdir
+								mounts: {
+									run.mounts
+									_cachesMounts
+								}
+								env: {
+									run.env
+									GOOS:   _os
+									GOARCH: _arch
+								}
+								command: name: "sh"
+								command: flags: "-c": script
+							}
+						},
+					]
+				}
 			}
 
 			_copy: core.#Copy & {

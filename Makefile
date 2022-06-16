@@ -43,5 +43,5 @@ cue.test:
 cue.test.tool:
 	cuem eval -o test.yaml ./cuepkg/tool/test
 
-dagger.test:
-	dagger do -p ./cuepkg/debian/examples/test.cue print
+dagger.test.golang:
+	dagger do -l=debug -p ./cuepkg/golang/examples/test.cue build
