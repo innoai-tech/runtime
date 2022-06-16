@@ -48,12 +48,6 @@ import (
 				CGO_ENABLED: "0"
 			}
 		}
-		mounts: {
-			codesource: core.#Mount & {
-				dest:     workdir
-				contents: source
-			}
-		}
 	}
 
 	image: {
@@ -93,7 +87,13 @@ import (
 
 				docker.#Build & {
 					steps: [
-						{output: input},
+						{
+							output: input
+						},
+						docker.#Copy & {
+							contents: source
+							dest:     run.workdir
+						},
 						for i, script in _scripts {
 							docker.#Run & {
 								workdir: run.workdir
