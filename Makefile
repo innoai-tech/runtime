@@ -42,3 +42,6 @@ cue.test:
 
 cue.test.tool:
 	cuem eval -o test.yaml ./cuepkg/tool/test
+
+dagger.test:
+	dagger do -p ./cuepkg/debian/examples/test.cue print
