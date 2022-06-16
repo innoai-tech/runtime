@@ -48,9 +48,10 @@ import (
 	}
 
 	image: {
-		"go":   "\(go.version)"
+		"go":   go.version
 		mirror: string | *""
 		packages: [pkgName=string]: string | *""
+		steps: [...docker.#Step]
 	}
 
 	_caches: {
