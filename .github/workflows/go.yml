@@ -7,8 +7,10 @@ on:
     tags:
       - 'v*'
     paths:
+      - cmd
       - pkg
       - go.mod
+      - dagger.cue
 
 jobs:
   go:
@@ -18,7 +20,7 @@ jobs:
       - uses: docker/setup-qemu-action@v2
       - run: curl -sSLf https://raw.githubusercontent.com/octohelm/dagger/main/install.sh | sudo sh
 
-      - run: dagger do ship
+      - run: dagger do go ship push
         env:
           GH_USERNAME: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
