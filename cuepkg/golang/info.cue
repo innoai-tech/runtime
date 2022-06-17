@@ -10,11 +10,11 @@ import (
 #Info: {
 	source: dagger.#FS
 
-	_gomod: core.#ReadFile & {
+	_read_gomod: core.#ReadFile & {
 		input: source
 		path:  "go.mod"
 	}
 
-	module: regexp.FindSubmatch(#"module (.+)\n"#, _gomod.contents)[1]
-	go:     regexp.FindSubmatch(#"\ngo (.+)\n?"#, _gomod.contents)[1]
+	module: regexp.FindSubmatch(#"module (.+)\n"#, _read_gomod.contents)[1]
+	go:     regexp.FindSubmatch(#"\ngo (.+)\n?"#, _read_gomod.contents)[1]
 }
