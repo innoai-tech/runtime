@@ -2,11 +2,17 @@ package crutil
 
 import (
 	"strings"
+	"text/template"
 
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
 	"universe.dagger.io/docker/cli"
 )
+
+#Platform: {
+	os:   string
+	arch: string
+}
 
 #Ship: {
 	name:   string
@@ -28,6 +34,7 @@ import (
 				}
 				platform: "\(p)"
 				source:   image.source
+
 				steps: [
 					for step in image.steps {
 						step
@@ -36,11 +43,19 @@ import (
 						step
 					},
 					docker.#Set & {
-						"config": config & {
-							env: {
-								PATH:   "/busybox:${PATH}"
-								GOOS:   "\(strings.Split(p, "/")[0])"
-								GOARCH: "\(strings.Split(p, "/")[1])"
+						"config": {
+							for k, v in config if k != "env" {
+								"\(k)": v
+							}
+							for k, v in config if k == "env" {
+								let ctx = {
+									TARGETPLATFORM: "\(p)"
+									TARGETOS:       "\(strings.Split(p, "/")[0])"
+									TARGETARCH:     "\(strings.Split(p, "/")[1])"
+								}
+								for ek, ev in v {
+									"env": "\(ek)": template.Execute(ev, ctx)
+								}
 							}
 						}
 					},

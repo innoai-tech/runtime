@@ -1,9 +1,10 @@
 package debian
 
 import (
-	"strings"
+	"dagger.io/dagger/core"
 
 	"universe.dagger.io/docker"
+	"github.com/innoai-tech/runtime/cuepkg/crutil"
 )
 
 #Version: "bullseye"
@@ -21,34 +22,21 @@ import (
 	packages: [pkgName=string]: string | *""
 	mirror: string | *""
 
+	_base: docker.#Pull & {
+		"source": source
+		if platform != _|_ {
+			"platform": platform
+		}
+	}
+
 	_build: docker.#Build & {
 		"steps": [
-			docker.#Pull & {
-				"source": source
-				if platform != _|_ {
-					"platform": platform
-				}
+			{
+				output: _base.output
 			},
-			if len(packages) > 0 {
-				docker.#Run & {
-					env: {
-						LINUX_MIRROR: mirror
-					}
-					command: {
-						name: "sh"
-						flags: "-c": strings.Join([
-								"""
-								if [ ${LINUX_MIRROR} != "" ]; then
-									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-								fi
-								""",
-								"apt-get update -y",
-								for _pkgName, _version in packages {"apt-get install -y -f \(_pkgName)\(_version)"},
-								"rm -rf /var/lib/apt/lists/*",
-						], "\n")
-					}
-				}
+			#InstallPackage & {
+				"packages": packages
+				"mirror":   mirror
 			},
 			for step in steps {
 				step
@@ -60,38 +48,50 @@ import (
 }
 
 #InstallPackage: {
-	input: docker.#Image | *docker.#Scratch
-	packages: [pkgName=string]: string | *""
-	mirror?: string
+	input:  docker.#Image
+	output: docker.#Image
 
-	_build: docker.#Build & {
-		steps: [
-			{
-				output: input
-			},
-			if len(packages) > 0 {
-				docker.#Run & {
-					env: {
-						LINUX_MIRROR: mirror
-					}
-					command: {
-						name: "sh"
-						flags: "-c": strings.Join([
-								"""
-								if [ ${LINUX_MIRROR} != "" ]; then
-									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-								fi
-								""",
-								"apt-get update -y",
-								for _pkgName, _version in packages {"apt-get install -y -f \(_pkgName)\(_version)"},
-								"rm -rf /var/lib/apt/lists/*",
-						], "\n")
-					}
-				}
-			},
-		]
+	packages: [pkgName=string]: string | *""
+	mirror: string | *""
+
+	if len(packages) == 0 {
+		output: input
 	}
 
-	output: _build.output
+	if len(packages) > 0 {
+		_install: crutil.#Script & {
+			"input": input
+			mounts: {
+				"apt_lists": core.#Mount & {
+					dest:     "/var/lib/apt/lists"
+					contents: core.#CacheDir & {
+						id: "apt_lists"
+					}
+				}
+				"apt_cache": core.#Mount & {
+					dest:     "/var/apt/cache"
+					contents: core.#CacheDir & {
+						id: "apt_cache"
+					}
+				}
+			}
+			env: {
+				LINUX_MIRROR: mirror
+			}
+			run: [
+				"""
+					if [ ${LINUX_MIRROR} != "" ]; then
+						sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+						sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+					fi
+					apt-get update -y
+					""",
+				for _pkgName, _version in packages {
+					"apt-get install -y -f \(_pkgName)\(_version)"
+				},
+			]
+		}
+
+		output: _install.output
+	}
 }
