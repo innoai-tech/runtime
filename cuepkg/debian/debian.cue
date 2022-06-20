@@ -79,13 +79,13 @@ import (
 				"apt_lists": core.#Mount & {
 					dest:     "/var/lib/apt/lists"
 					contents: core.#CacheDir & {
-						id: "apt_lists"
+						id: "\(input.platform)/apt_lists"
 					}
 				}
 				"apt_cache": core.#Mount & {
 					dest:     "/var/apt/cache"
 					contents: core.#CacheDir & {
-						id: "apt_cache"
+						id: "\(input.platform)/apt_cache"
 					}
 				}
 			}
