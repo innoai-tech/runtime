@@ -9,23 +9,37 @@ import (
 
 #Version: "bullseye"
 
-#Mirror: {
+#LinuxMirror: {
 	ustc:        "http://mirrors.ustc.edu.cn"
 	huaweicloud: "http://repo.huaweicloud.com"
 }
 
-#Build: {
-	source:    string | *"index.docker.io/debian:\(#Version)-slim"
-	platform?: string
-	steps: [...docker.#Step]
-
+#ImageBase: {
 	packages: [pkgName=string]: string | *""
-	mirror: string | *""
+	mirror: crutil.#Mirror
+	steps: [...docker.#Step]
+	auth?: crutil.#Auth
+	...
+}
+
+#Build: #ImageBase & {
+	source:    string | *"docker.io/library/debian:\(#Version)-slim"
+	platform?: string
+
+	packages: _
+	mirror:   _
+	steps:    _
+	auth?:    _
 
 	_base: docker.#Pull & {
-		"source": source
+		"source": "\(mirror.pull)\(source)"
+
 		if platform != _|_ {
 			"platform": platform
+		}
+
+		if auth != _|_ {
+			"auth": auth
 		}
 	}
 
@@ -52,7 +66,7 @@ import (
 	output: docker.#Image
 
 	packages: [pkgName=string]: string | *""
-	mirror: string | *""
+	mirror: crutil.#Mirror
 
 	if len(packages) == 0 {
 		output: input
@@ -76,7 +90,7 @@ import (
 				}
 			}
 			env: {
-				LINUX_MIRROR: mirror
+				LINUX_MIRROR: mirror.linux
 			}
 			run: [
 				"""

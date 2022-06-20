@@ -9,6 +9,7 @@ import (
 	"universe.dagger.io/docker"
 	"universe.dagger.io/docker/cli"
 
+	"github.com/innoai-tech/runtime/cuepkg/debian"
 	"github.com/innoai-tech/runtime/cuepkg/crutil"
 	"github.com/innoai-tech/runtime/cuepkg/tool"
 )
@@ -39,12 +40,8 @@ import (
 
 		script: "go build -ldflags=\"\(strings.Join(ldflags, " "))\" -o /output/\(binary) \(main)"
 
-		// dev image setting
-		image: {
-			packages: [pkgName=string]: string | *""
-			mirror: string | *""
-			steps: [...docker.#Step]
-		}
+		// dev image 
+		image: debian.#ImageBase
 
 		for os in goos for arch in goarch {
 			"\(os)/\(arch)": {

@@ -21,6 +21,7 @@ import (
 	image: {
 		source: string | *""
 		auth?:  #Auth
+		mirror: #Mirror
 		steps: [...docker.#Step]
 		postSteps: [...docker.#Step]
 	}
@@ -32,8 +33,9 @@ import (
 				if image.auth != _|_ {
 					auth: image.auth
 				}
-				platform: "\(p)"
 				source:   image.source
+				mirror:   image.mirror
+				platform: "\(p)"
 
 				steps: [
 					for step in image.steps {

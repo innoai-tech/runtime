@@ -22,16 +22,13 @@ client: env: {
 	GH_USERNAME: string | *""
 	GH_PASSWORD: dagger.#Secret
 
+	CONTAINER_REGISTRY_PULL_PROXY: string | *""
+
 	LINUX_MIRROR: string | *""
 }
 
-client: network: {
-	"unix:///var/run/docker.sock": connect: dagger.#Socket
-}
-
-client: platform: {
-	arch: _
-}
+client: platform: arch: _
+client: network: "unix:///var/run/docker.sock": connect: dagger.#Socket
 
 client: filesystem: {
 	"build/output": write: contents: actions.go.archive.output
@@ -74,7 +71,12 @@ actions: go: golang.#Project & {
 			"go mod download",
 		]
 
-		image: mirror: "\(client.env.LINUX_MIRROR)"
+		image: {
+			mirror: {
+				linux: client.env.LINUX_MIRROR
+				pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
+			}
+		}
 	}
 
 	devkit: load: host: client.network."unix:///var/run/docker.sock".connect
@@ -85,6 +87,7 @@ actions: go: golang.#Project & {
 
 		image: {
 			source: "gcr.io/distroless/static-debian11:debug"
+			mirror: pull: client.env.CONTAINER_REGISTRY_PULL_PROXY
 		}
 
 		config: env: {
@@ -92,13 +95,13 @@ actions: go: golang.#Project & {
 			ENV:      ""
 		}
 
-		load: host: client.network."unix:///var/run/docker.sock".connect
-
 		push: {
 			auth: {
-				username: "\(client.env.GH_USERNAME)"
+				username: client.env.GH_USERNAME
 				secret:   client.env.GH_PASSWORD
 			}
 		}
+
+		load: host: client.network."unix:///var/run/docker.sock".connect
 	}
 }

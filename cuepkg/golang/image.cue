@@ -6,6 +6,6 @@ import "github.com/innoai-tech/runtime/cuepkg/debian"
 	goversion: string | *"1.18"
 
 	debian.#Build & {
-		source: "golang:\(goversion)-\(debian.#Version)"
+		source: "docker.io/library/golang:\(goversion)-\(debian.#Version)"
 	}
 }

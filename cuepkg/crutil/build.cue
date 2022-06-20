@@ -6,6 +6,7 @@ import (
 
 #Build: {
 	source:    string | *""
+	mirror:    #Mirror
 	platform?: string
 	auth?:     #Auth
 
@@ -20,7 +21,7 @@ import (
 				if auth != _|_ {
 					"auth": auth
 				}
-				"source": source
+				"source": "\(mirror.pull)\(source)"
 			}
 		},
 		{

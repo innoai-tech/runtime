@@ -5,11 +5,9 @@ import "github.com/innoai-tech/runtime/cuepkg/debian"
 #Image: {
 	node: string | *"18"
 
-	packages: {
-		"build-dep": _
-	}
+	packages: {}
 
 	debian.#Build & {
-		source: "node:\(node)-\(debian.#Version)"
+		source: "docker.io/library/node:\(node)-\(debian.#Version)"
 	}
 }

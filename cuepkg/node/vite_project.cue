@@ -32,9 +32,6 @@ import (
 
 		// dev image setting
 		image: #Image & {
-			packages: [pkgName=string]: string | *""
-			mirror: string | *""
-			steps: [...docker.#Step]
 		}
 
 		docker.#Build & {
