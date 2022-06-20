@@ -23,7 +23,6 @@ client: env: {
 	GH_PASSWORD: dagger.#Secret
 
 	CONTAINER_REGISTRY_PULL_PROXY: string | *""
-
 	LINUX_MIRROR: string | *""
 }
 

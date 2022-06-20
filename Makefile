@@ -44,5 +44,5 @@ cue.test.tool:
 	cuem eval -o test.yaml ./cuepkg/tool/test
 
 d.test.%:
-	dagger do -p ./cuepkg/$*/examples/test.cue load
+	dagger -l=debug do -p ./cuepkg/$*/examples/test.cue test
 

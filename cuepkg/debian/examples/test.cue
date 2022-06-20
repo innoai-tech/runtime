@@ -3,7 +3,6 @@ package main
 import (
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
-	"universe.dagger.io/docker/cli"
 
 	"github.com/innoai-tech/runtime/cuepkg/crutil"
 	"github.com/innoai-tech/runtime/cuepkg/debian"
@@ -20,8 +19,12 @@ client: network: {
 }
 
 img: debian.#Build & {
-	mirror: "\(client.env.LINUX_MIRROR)"
-	packages: "ca-certificates": ""
+	mirror: {
+		linux: "\(client.env.LINUX_MIRROR)"
+	}
+	packages: {
+		"git": _
+	}
 	steps: [
 		crutil.#Script & {
 			name: "skip"
@@ -40,14 +43,8 @@ inimage: core.#ReadFile & {
 	path:  "/etc/test"
 }
 
-actions: load: cli.#Load & {
-	image: img.output
-	host:  client.network."unix:///var/run/docker.sock".connect
-	tag:   "debian:test"
-}
-
 actions: test: core.#Nop & {
 	input: """
-			loaded: \(actions.load.imageID)
+			loaded: \(inimage.contents)
 			"""
 }
