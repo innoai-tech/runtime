@@ -1,6 +1,8 @@
 package crutil
 
 import (
+	"strings"
+	"path"
 	"universe.dagger.io/docker"
 )
 
@@ -33,6 +35,15 @@ import (
 				docker.#Copy & {
 					contents: _dep["\(name):\(version)"].output.rootfs
 					dest:     "/"
+				}
+			},
+			docker.#Set & {
+				config: {
+					env: {
+						LD_LIBRARY_PATH: strings.Join([ for n, v in dependences {
+							"/usr/pkg/\(path.Base(n))/\(strings.Split(input.platform, "/")[1])/lib"
+						}], ":")
+					}
 				}
 			},
 		]
