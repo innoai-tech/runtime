@@ -11,7 +11,7 @@ import (
 	input:  docker.#Image
 	output: docker.#Image
 
-	name: string | *"run"
+	name: string | *"script"
 
 	mounts: [Name=string]: core.#Mount
 	env: [string]:         string | dagger.#Secret

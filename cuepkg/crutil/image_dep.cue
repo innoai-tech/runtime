@@ -7,29 +7,29 @@ import (
 #ImageDep: {
 	input: docker.#Image | *docker.#Scratch
 	dependences: [Path=string]: string
-	auth?: #Auth
+	auth?:  #Auth
+	mirror: #Mirror
 
-	_platform: "\(input.platform)"
+	_dep: {
+		for name, version in dependences {
+			"\(name):\(version)": docker.#Pull & {
+				if auth != _|_ {
+					"auth": auth
+				}
+				if (input.platform != _|_) {
+					"platform": input.platform
+				}
+				"source": "\(mirror.pull)\(name):\(version)"
+			}
+		}
+	}
 
-	_build: docker.#Build & {
+	_imageDep: docker.#Build & {
 		steps: [
 			{
 				output: input
 			},
 			for name, version in dependences {
-				_dep: {
-					"\(name):\(version)": docker.#Pull & {
-						if auth != _|_ {
-							"auth": {
-								username: auth.username
-								secret:   auth.secret
-							}
-						}
-						source:   "\(name):\(version)"
-						platform: "\(_platform)"
-					}
-				}
-
 				docker.#Copy & {
 					contents: _dep["\(name):\(version)"].output.rootfs
 					dest:     "/"
@@ -38,5 +38,5 @@ import (
 		]
 	}
 
-	output: _build.output
+	output: _imageDep.output
 }

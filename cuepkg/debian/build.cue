@@ -17,16 +17,17 @@ import (
 }
 
 #Build: #ImageBase & {
-	source:    string | *"docker.io/library/debian:\(#Version)-slim"
-	platform?: string
+	source: string | *"docker.io/library/debian:\(#Version)-slim"
 
 	packages: _
 	mirror:   _
 	steps:    _
 	auth?:    _
 
-	_base: docker.#Pull & {
-		"source": "\(mirror.pull)\(source)"
+	platform?: string
+
+	_build: crutil.#Build & {
+		"source": "\(source)"
 
 		if platform != _|_ {
 			"platform": platform
@@ -35,13 +36,10 @@ import (
 		if auth != _|_ {
 			"auth": auth
 		}
-	}
 
-	_build: docker.#Build & {
+		"mirror": mirror
+
 		"steps": [
-			{
-				output: _base.output
-			},
 			#ConfigMirror & {
 				"mirror": mirror
 			},

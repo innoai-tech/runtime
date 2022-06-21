@@ -27,6 +27,11 @@ import (
 	}
 
 	mirror: crutil.#Mirror
+
+	base: {
+		source: string
+	}
+
 	packages: [Name=string]: string | *""
 
 	ship: crutil.#Ship & {
@@ -50,13 +55,14 @@ import (
 		image: {
 			steps: [
 				#InstallDiff & {
+					"base":     base
 					"mirror":   mirror
 					"packages": packages
 				},
 				#Pick & {
 					dests: {
-						"/usr/shared/\(name)/{{ .TARGETARCH }}/\(name)/include": target.include
-						"/usr/shared/\(name)/{{ .TARGETARCH }}/\(name)/lib":     target.lib
+						"/usr/pkg-{{ .TARGETARCH }}/\(name)/include": target.include
+						"/usr/pkg-{{ .TARGETARCH }}/\(name)/lib":     target.lib
 					}
 				},
 			]
@@ -68,26 +74,35 @@ import (
 	input:  docker.#Image
 	output: docker.#Image
 
+	base: source: string
+
 	mirror: crutil.#Mirror
 	packages: [Name=string]: string | *""
 
-	_base: debian.#Build & {
-		platform: input.platform
-		"mirror": mirror
+	_base: docker.#Pull & {
+		"source": "\(mirror.pull)\(base.source)"
 	}
 
-	_install: debian.#InstallPackage & {
-		input:      _base.output
+	_pkg: debian.#Build & {
+		"platform": input.platform
+		"mirror":   mirror
 		"packages": packages
 	}
 
 	_diff: core.#Diff & {
-		"lower": _install.input.rootfs
-		"upper": _install.output.rootfs
+		"lower": _base.output.rootfs
+		"upper": _pkg.output.rootfs
+	}
+
+	_flat: core.#Copy & {
+		"input":    dagger.#Scratch
+		"contents": _diff.output
+		"dest":     "/"
+		"source":   "/"
 	}
 
 	output: docker.#Image & {
-		rootfs:   _diff.output
+		rootfs:   _flat.output
 		platform: input.platform
 		config: {}
 	}
@@ -97,12 +112,10 @@ import (
 	input: docker.#Image
 	dests: [Dir=string]: [...string]
 
-	_platform: "\(input.platform)"
-
 	_ctx: {
-		TARGETPLATFORM: "\(_platform)"
-		TARGETOS:       "\(strings.Split(_platform, "/")[0])"
-		TARGETARCH:     "\(strings.Split(_platform, "/")[1])"
+		TARGETPLATFORM: "\(input.platform)"
+		TARGETOS:       "\(strings.Split(input.platform, "/")[0])"
+		TARGETARCH:     "\(strings.Split(input.platform, "/")[1])"
 		TARGETGNUARCH:  {
 			"amd64": "x86_64"
 			"arm64": "aarch64"

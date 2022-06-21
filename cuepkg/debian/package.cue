@@ -11,6 +11,7 @@ import (
 	mirror: crutil.#Mirror
 
 	crutil.#Script & {
+		name: "config linux mirror"
 		env: {
 			LINUX_MIRROR: mirror.linux
 		}
@@ -39,10 +40,11 @@ import (
 		_dirs: {
 			"varlog":    "/var/log"
 			"apt_cache": "/var/apt/cache"
-			"apt_lists": "/var/lib/apt/lists"
+//			"apt_lists": "/var/lib/apt/lists"
 		}
 
 		_install: crutil.#Script & {
+			"name":  "install package"
 			"input": input
 			mounts: {
 				for id, dir in _dirs {
