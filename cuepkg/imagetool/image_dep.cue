@@ -32,7 +32,7 @@ import (
 					}
 
 					_pull: #Pull & {
-						"source":   "\(mirror.pull)\(name):\(version)"
+						"source":   (#SourcePatch & {"mirror": mirror, "source": "\(name):\(version)"}).output
 						"auths":    auths
 						"platform": _platform.output
 					}

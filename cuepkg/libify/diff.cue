@@ -18,7 +18,7 @@ import (
 	packages: [Name=string]: string | *""
 
 	_base: docker.#Pull & {
-		"source": "\(mirror.pull)\(base.source)"
+		"source": (imagetool.#SourcePatch & {"mirror": mirror, "source": base.source}).output
 	}
 
 	_pkg: debian.#Build & {

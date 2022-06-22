@@ -14,7 +14,7 @@ import (
 	_dag: "0": {
 		if from != "" {
 			#Pull & {
-				"source": "\(mirror.pull)\(from)"
+				"source": (#SourcePatch & {"mirror": mirror, "source": from}).output
 				"auths":  auths
 
 				if platform != _|_ {
@@ -25,7 +25,7 @@ import (
 
 		if from == "" {
 			_busybox: #Pull & {
-				"source": "\(mirror.pull)docker.io/library/busybox"
+				"source": (#SourcePatch & {"mirror": mirror, "source": "docker.io/library/busybox"}).output
 				"auths":  auths
 
 				if platform != _|_ {
