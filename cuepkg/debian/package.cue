@@ -17,7 +17,7 @@ import (
 		}
 		run: [
 			"""
-				if [ ${LINUX_MIRROR} != "" ]; then
+				if [ "${LINUX_MIRROR}" != "" ]; then
 					sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
 					sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
 				fi
