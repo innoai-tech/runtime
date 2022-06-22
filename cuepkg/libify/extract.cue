@@ -22,10 +22,7 @@ import (
 		TARGETPLATFORM: "\(input.platform)"
 		TARGETOS:       "\(strings.Split(input.platform, "/")[0])"
 		TARGETARCH:     "\(strings.Split(input.platform, "/")[1])"
-		TARGETGNUARCH:  {
-			"amd64": "x86_64"
-			"arm64": "aarch64"
-		}["\(TARGETARCH)"]
+		TARGETGNUARCH:  crutil.#GnuArch["\(TARGETARCH)"]
 	}
 
 	_dirs: {

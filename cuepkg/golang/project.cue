@@ -26,6 +26,8 @@ import (
 	goos: [...string]
 	goarch: [...string]
 	cgo:     bool | *false
+	isolate: bool | *cgo
+
 	ldflags: [...string] | *["-x -w"]
 	workdir: string | *"/go/src"
 
@@ -142,10 +144,20 @@ import (
 			}
 		}
 
-		if !cgo {
+		if !isolate {
 			_image: #Image & {
 				build.image
 				"goversion": goversion
+
+				// when cgo need, cross-gcc required 
+				if cgo {
+					"packages": {
+						"gcc-x86-64-linux-gnu": {platform: "linux/arm64"}
+						"g++-x86-64-linux-gnu": {platform: "linux/arm64"}
+						"gcc-aarch64-linux-gnu": {platform: "linux/amd64"}
+						"g++-aarch64-linux-gnu": {platform: "linux/amd64"}
+					}
+				}
 			}
 
 			for os in goos for arch in goarch {
@@ -155,7 +167,7 @@ import (
 			}
 		}
 
-		if cgo {
+		if isolate {
 			for os in goos for arch in goarch {
 				"\(os)/\(arch)": {
 					_image: #Image & {
@@ -197,6 +209,12 @@ import (
 									env
 									GOOS:   os
 									GOARCH: arch
+
+									if cgo & !isolate {
+										CXX: "\(crutil.#GnuArch["\(arch)"])-linux-gnu-g++"
+										CC:  "\(crutil.#GnuArch["\(arch)"])-linux-gnu-gcc"
+										AR:  "\(crutil.#GnuArch["\(arch)"])-linux-gnu-gcc-ar"
+									}
 								}
 								"run": scripts
 							}

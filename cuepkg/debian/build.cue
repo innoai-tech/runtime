@@ -8,8 +8,9 @@ import (
 
 #Version: "bullseye" // debian 11
 
+
 #ImageBase: {
-	packages: [pkgName=string]: string | *""
+	packages: [pkgName=string]: #PackageOption
 	mirror: crutil.#Mirror
 	steps: [...docker.#Step]
 	auth?: crutil.#Auth

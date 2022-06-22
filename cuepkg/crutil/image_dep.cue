@@ -12,16 +12,20 @@ import (
 	auth?:  #Auth
 	mirror: #Mirror
 
+	platforms: [...string] | *[input.platform]
+
 	_dep: {
 		for name, version in dependences {
-			"\(name):\(version)": docker.#Pull & {
-				if auth != _|_ {
-					"auth": auth
+			"\(name):\(version)": {
+				for platform in platforms {
+					"\(platform)": docker.#Pull & {
+						if auth != _|_ {
+							"auth": auth
+						}
+						"platform": platform
+						"source":   "\(mirror.pull)\(name):\(version)"
+					}
 				}
-				if (input.platform != _|_) {
-					"platform": input.platform
-				}
-				"source": "\(mirror.pull)\(name):\(version)"
 			}
 		}
 	}
@@ -31,17 +35,24 @@ import (
 			{
 				output: input
 			},
-			for name, version in dependences {
+			for name, version in dependences for platform in platforms {
 				docker.#Copy & {
-					contents: _dep["\(name):\(version)"].output.rootfs
+					contents: _dep["\(name):\(version)"]["\(platform)"].output.rootfs
 					dest:     "/"
 				}
 			},
 			docker.#Set & {
 				config: {
 					env: {
-						LD_LIBRARY_PATH: strings.Join([ for n, v in dependences {
+						"LD_LIBRARY_PATH": strings.Join([ for n, v in dependences {
 							"/usr/pkg/\(path.Base(n))/\(strings.Split(input.platform, "/")[1])/lib"
+						}], ":")
+					}
+
+					for platform in platforms {
+						let _arch = strings.ToUpper(strings.Split(platform, "/")[1])
+						env: "LD_LIBRARY_PATH_\(_arch)": strings.Join([ for n, v in dependences {
+							"/usr/pkg/\(path.Base(n))/\(strings.Split(platform, "/")[1])/lib"
 						}], ":")
 					}
 				}
