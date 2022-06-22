@@ -5,7 +5,7 @@ import (
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
 
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #ViteProject: {
@@ -48,7 +48,7 @@ import (
 					"build": ["\(build.script)"]
 					"postbuild": build.post
 				} {
-					crutil.#Script & {
+					imagetool.#Script & {
 						"name":    "\(name)"
 						"workdir": "\(workdir)"
 						"mounts": {

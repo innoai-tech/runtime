@@ -23,7 +23,7 @@ client: env: {
 	GH_PASSWORD: dagger.#Secret
 
 	CONTAINER_REGISTRY_PULL_PROXY: string | *""
-	LINUX_MIRROR: string | *""
+	LINUX_MIRROR:                  string | *""
 }
 
 client: platform: arch: _
@@ -31,6 +31,16 @@ client: network: "unix:///var/run/docker.sock": connect: dagger.#Socket
 
 client: filesystem: {
 	"build/output": write: contents: actions.go.archive.output
+}
+
+auths: "ghcr.io": {
+	username: client.env.GH_USERNAME
+	secret:   client.env.GH_PASSWORD
+}
+
+mirror: {
+	linux: client.env.LINUX_MIRROR
+	pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
 }
 
 actions: version: tool.#ResolveVersion & {
@@ -69,38 +79,32 @@ actions: go: golang.#Project & {
 		pre: [
 			"go mod download",
 		]
-
-		image: {
-			mirror: {
-				linux: client.env.LINUX_MIRROR
-				pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
-			}
-		}
 	}
 
 	devkit: load: host: client.network."unix:///var/run/docker.sock".connect
 
 	ship: {
-		name: "\(strings.Replace(actions.go.module, "github.com/", "ghcr.io/", -1))/\(actions.go.binary)"
+		name: "\(strings.Replace(actions.go.module, "github.com/", "ghcr.io/", -1))/\(go.binary)"
 		tag:  "\(actions.version.output)"
 
-		image: {
-			source: "gcr.io/distroless/static-debian11:debug"
-			mirror: pull: client.env.CONTAINER_REGISTRY_PULL_PROXY
-		}
+		from: "gcr.io/distroless/static-debian11:debug"
 
-		config: env: {
-			APP_ROOT: "/app"
-			ENV:      ""
-		}
-
-		push: {
-			auth: {
-				username: client.env.GH_USERNAME
-				secret:   client.env.GH_PASSWORD
+		config: {
+			env: {
+				APP_ROOT: "/app"
+				ENV:      ""
 			}
 		}
 
 		load: host: client.network."unix:///var/run/docker.sock".connect
+	}
+
+	ship: {
+		"auths":  auths
+		"mirror": mirror
+	}
+	build: image: {
+		"auths":  auths
+		"mirror": mirror
 	}
 }

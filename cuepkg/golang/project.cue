@@ -10,7 +10,7 @@ import (
 	"universe.dagger.io/docker/cli"
 
 	"github.com/innoai-tech/runtime/cuepkg/debian"
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 	"github.com/innoai-tech/runtime/cuepkg/tool"
 )
 
@@ -81,7 +81,7 @@ import (
 		}
 	}
 
-	ship: crutil.#Ship & {
+	ship: imagetool.#Ship & {
 		tag: version
 
 		config: {
@@ -100,16 +100,14 @@ import (
 			},
 		]
 
-		image: {
-			postSteps: [
-				docker.#Copy & {
-					input:      _
-					"contents": build["\(input.platform)"].output.rootfs
-					"source":   "/output"
-					"dest":     "/"
-				},
-			]
-		}
+		postSteps: [
+			docker.#Copy & {
+				input:      _
+				"contents": build["\(input.platform)"].output.rootfs
+				"source":   "/output"
+				"dest":     "/"
+			},
+		]
 	}
 
 	// logic  
@@ -198,7 +196,7 @@ import (
 							"build": ["\(build.script)"]
 							"postbuild": build.post
 						} {
-							crutil.#Script & {
+							imagetool.#Script & {
 								"name":    "\(name)"
 								"workdir": "\(workdir)"
 								"mounts": {
@@ -211,9 +209,9 @@ import (
 									GOARCH: arch
 
 									if cgo & !isolate {
-										CXX: "\(crutil.#GnuArch["\(arch)"])-linux-gnu-g++"
-										CC:  "\(crutil.#GnuArch["\(arch)"])-linux-gnu-gcc"
-										AR:  "\(crutil.#GnuArch["\(arch)"])-linux-gnu-gcc-ar"
+										CXX: "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-g++"
+										CC:  "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-gcc"
+										AR:  "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-gcc-ar"
 									}
 								}
 								"run": scripts

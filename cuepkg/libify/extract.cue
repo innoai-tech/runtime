@@ -8,7 +8,7 @@ import (
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
 
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #Extract: {
@@ -22,7 +22,7 @@ import (
 		TARGETPLATFORM: "\(input.platform)"
 		TARGETOS:       "\(strings.Split(input.platform, "/")[0])"
 		TARGETARCH:     "\(strings.Split(input.platform, "/")[1])"
-		TARGETGNUARCH:  crutil.#GnuArch["\(TARGETARCH)"]
+		TARGETGNUARCH:  imagetool.#GnuArch["\(TARGETARCH)"]
 	}
 
 	_dirs: {
@@ -53,7 +53,7 @@ import (
 		source: "busybox"
 	}
 
-	_ln: crutil.#Script & {
+	_ln: imagetool.#Script & {
 		input: docker.#Image & {
 			rootfs:   _merge.output
 			platform: input.platform

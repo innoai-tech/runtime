@@ -1,4 +1,4 @@
-package crutil
+package imagetool
 
 import (
 	"strings"
@@ -9,20 +9,17 @@ import (
 #ImageDep: {
 	input: docker.#Image | *docker.#Scratch
 	dependences: [Path=string]: string
-	auth?:  #Auth
-	mirror: #Mirror
-
+	auths: [Host=string]:       #Auth
+	mirror:    #Mirror
 	platforms: [...string] | *[input.platform]
 
 	_dep: {
 		for name, version in dependences {
 			"\(name):\(version)": {
 				for platform in platforms {
-					"\(platform)": docker.#Pull & {
-						if auth != _|_ {
-							"auth": auth
-						}
+					"\(platform)": #Pull & {
 						"platform": platform
+						"auths":    auths
 						"source":   "\(mirror.pull)\(name):\(version)"
 					}
 				}

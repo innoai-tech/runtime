@@ -4,7 +4,7 @@ import (
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 	"github.com/innoai-tech/runtime/cuepkg/debian"
 )
 
@@ -26,10 +26,10 @@ img: debian.#Build & {
 		"git": _
 	}
 	steps: [
-		crutil.#Script & {
+		imagetool.#Script & {
 			name: "skip"
 		},
-		crutil.#Script & {
+		imagetool.#Script & {
 			name: "echo test"
 			run: [
 				"echo test > /etc/test",

@@ -20,7 +20,7 @@ jobs:
       - uses: docker/setup-qemu-action@v2
       - run: curl -sSLf https://raw.githubusercontent.com/octohelm/dagger/main/install.sh | sudo sh
 
-      - run: dagger do go ship push
+      - run: dagger do go ship pushx
         env:
           GH_USERNAME: ${{ github.actor }}
           GH_PASSWORD: ${{ secrets.GITHUB_TOKEN }}
