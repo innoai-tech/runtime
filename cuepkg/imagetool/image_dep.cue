@@ -4,7 +4,6 @@ import (
 	"strings"
 	"path"
 
-	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
 )
 
@@ -17,6 +16,17 @@ import (
 
 	platforms: [...string] | *[input.platform]
 
+	_dep: {
+		for name, version in dependences
+		for platform in platforms {
+			"\(name):\(version):\(platform)": #Pull & {
+				"source":   (#SourcePatch & {"mirror": mirror, "source": "\(name):\(version)"}).output
+				"auths":    auths
+				"platform": platform
+			}
+		}
+	}
+
 	_imageDep: docker.#Build & {
 		steps: [
 			{
@@ -27,20 +37,10 @@ import (
 				{
 					input: _
 
-					_platform: core.#Nop & {
-						input: platform
-					}
-
-					_pull: #Pull & {
-						"source":   (#SourcePatch & {"mirror": mirror, "source": "\(name):\(version)"}).output
-						"auths":    auths
-						"platform": _platform.output
-					}
-
 					_copy: docker.#Copy & {
-						"input":  input
-						contents: _pull.output.rootfs
-						dest:     "/"
+						"input":    input
+						"contents": _dep["\(name):\(version):\(platform)"].output.rootfs
+						"dest":     "/"
 					}
 
 					output: _copy.output

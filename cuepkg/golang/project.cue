@@ -208,7 +208,7 @@ import (
 									GOOS:   os
 									GOARCH: arch
 
-									if cgo & !isolate {
+									if cgo && !isolate {
 										CXX: "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-g++"
 										CC:  "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-gcc"
 										AR:  "\(imagetool.#GnuArch["\(arch)"])-linux-gnu-gcc-ar"
