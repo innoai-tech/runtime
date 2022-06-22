@@ -1,17 +1,17 @@
 package golang
 
 import (
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #ConfigGoPrivate: {
 	host: string
 
-	auth: crutil.#Auth & {
+	auth: imagetool.#Auth & {
 		username: _ | *"gitlab-ci-token"
 	}
 
-	crutil.#Script & {
+	imagetool.#Script & {
 		name: "git config for go private"
 		env: {
 			CI_JOB_USER:  auth.username

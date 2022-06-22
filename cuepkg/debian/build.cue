@@ -3,17 +3,16 @@ package debian
 import (
 
 	"universe.dagger.io/docker"
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #Version: "bullseye" // debian 11
 
-
 #ImageBase: {
 	packages: [pkgName=string]: #PackageOption
-	mirror: crutil.#Mirror
+	mirror: imagetool.#Mirror
 	steps: [...docker.#Step]
-	auth?: crutil.#Auth
+	auths: [Host=string]: imagetool.#Auth
 	...
 }
 
@@ -23,23 +22,17 @@ import (
 	packages: _
 	mirror:   _
 	steps:    _
-	auth?:    _
+	auths:    _
 
 	platform?: string
 
-	_build: crutil.#Build & {
-		"source": "\(source)"
-
+	_build: imagetool.#Build & {
 		if platform != _|_ {
 			"platform": platform
 		}
-
-		if auth != _|_ {
-			"auth": auth
-		}
-
+		"from":   "\(source)"
+		"auths":  auths
 		"mirror": mirror
-
 		"steps": [
 			#ConfigMirror & {
 				"mirror": mirror

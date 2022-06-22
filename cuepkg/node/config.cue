@@ -3,7 +3,7 @@ package node
 import (
 	"dagger.io/dagger"
 
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #ConfigPrivateRegistry: {
@@ -11,7 +11,7 @@ import (
 	host:  string
 	token: dagger.#Secret
 
-	crutil.#Script & {
+	imagetool.#Script & {
 		name: "config private registry"
 		env: NPM_AUTH_TOKEN: token
 		run: [

@@ -1,4 +1,4 @@
-package crutil
+package imagetool
 
 #GnuArch: {
 	"amd64": "x86_64"

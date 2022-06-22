@@ -1,4 +1,4 @@
-package crutil
+package imagetool
 
 import (
 	"dagger.io/dagger"
@@ -22,16 +22,11 @@ import (
 	run: [...string]
 
 	_run: "\(name)": {
-		for idx, script in run {
-			"\(idx)": docker.#Step & {
-				_input: docker.#Image
+		"0": output: input
 
-				if idx == 0 {
-					_input: input
-				}
-				if idx > 0 {
-					_input: _run["\(name)"]["\(idx-1)"].output
-				}
+		for idx, script in run {
+			"\(idx+1)": docker.#Step & {
+				_input: _run["\(name)"]["\(idx)"].output
 
 				docker.#Run & {
 					input: _input
@@ -56,11 +51,5 @@ import (
 		}
 	}
 
-	if len(_run["\(name)"]) == 0 {
-		output: input
-	}
-
-	if len(_run["\(name)"]) > 0 {
-		output: _run["\(name)"]["\(len(_run["\(name)"])-1)"].output
-	}
+	output: _run["\(name)"]["\(len(_run["\(name)"])-1)"].output
 }

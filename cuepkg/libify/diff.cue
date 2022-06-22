@@ -5,7 +5,7 @@ import (
 	"universe.dagger.io/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/debian"
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #Diff: {
@@ -14,7 +14,7 @@ import (
 
 	base: source: string
 
-	mirror: crutil.#Mirror
+	mirror: imagetool.#Mirror
 	packages: [Name=string]: string | *""
 
 	_base: docker.#Pull & {

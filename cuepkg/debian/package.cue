@@ -4,13 +4,13 @@ import (
 	"dagger.io/dagger/core"
 
 	"universe.dagger.io/docker"
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #ConfigMirror: {
-	mirror: crutil.#Mirror
+	mirror: imagetool.#Mirror
 
-	crutil.#Script & {
+	imagetool.#Script & {
 		name: "config linux mirror"
 		env: {
 			LINUX_MIRROR: mirror.linux
@@ -48,7 +48,7 @@ import (
 			//             "apt_lists": "/var/lib/apt/lists"
 		}
 
-		_install: crutil.#Script & {
+		_install: imagetool.#Script & {
 			"name":  "install package"
 			"input": input
 			mounts: {

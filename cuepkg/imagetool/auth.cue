@@ -1,4 +1,4 @@
-package crutil
+package imagetool
 
 import "dagger.io/dagger"
 

@@ -3,7 +3,7 @@ package libify
 import (
 	"path"
 
-	"github.com/innoai-tech/runtime/cuepkg/crutil"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 #Project: {
@@ -19,7 +19,7 @@ import (
 		lib: [...string]
 	}
 
-	mirror: crutil.#Mirror
+	mirror: imagetool.#Mirror
 
 	base: {
 		source: string
@@ -27,7 +27,7 @@ import (
 
 	packages: [Name=string]: string | *""
 
-	ship: crutil.#Ship & {
+	ship: imagetool.#Ship & {
 		tag: version
 
 		config: {
