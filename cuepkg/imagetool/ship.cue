@@ -98,11 +98,13 @@ import (
 				}
 			}
 
-			"dest":  "\(name):\(tag)"
-			"auths": auths
-			"images": {
-				for platform in platforms {
-					"\(platform)": _published["\(platform)"].output
+			#Push & {
+				"dest":  "\(name):\(tag)"
+				"auths": auths
+				"images": {
+					for platform in platforms {
+						"\(platform)": _published["\(platform)"].output
+					}
 				}
 			}
 		}
