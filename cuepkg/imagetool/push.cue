@@ -26,9 +26,12 @@ import (
 		image: docker.#Image
 
 		_push: {
-			input:    image.rootfs
-			config:   image.config
-			platform: image.platform
+			input:  image.rootfs
+			config: image.config
+
+			if (image.platform != _|_) {
+				platform: image.platform
+			}
 		}
 	} | {
 		images: [Platform=string]: docker.#Image

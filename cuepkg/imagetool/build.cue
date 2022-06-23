@@ -26,28 +26,8 @@ import (
 		}
 
 		if from == "" {
-			_busybox: #Pull & {
-				"source": "docker.io/library/busybox"
-
-				"auths":  auths
-				"mirror": mirror
-
-				if platform != _|_ {
-					"platform": platform
-				}
-			}
-
-			_output: _busybox.output
-
-			_plaform: [
-					if _output.platform != _|_ {
-					_output.platform
-				},
-				platform,
-			][0]
-
 			output: docker.#Scratch & {
-				"platform": _plaform
+				"platform": platform
 			}
 		}
 	}
