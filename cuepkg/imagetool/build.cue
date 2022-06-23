@@ -37,9 +37,11 @@ import (
 				}
 			}
 
+			_output: _busybox.output
+
 			output: docker.#Scratch & {
-				if _busybox.output.platform != _|_ {
-					"platform": _busybox.output.platform
+				if _output.platform != _|_ {
+					"platform": _output.platform
 				}
 			}
 		}

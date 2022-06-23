@@ -9,7 +9,7 @@ import (
 dagger.#Plan
 
 actions: test: imagetool.#Build & {
-	from: "docker.io/library/debian:bullseye-slim"
+	from: ""
 
 	steps: [
 		imagetool.#ImageDep & {
