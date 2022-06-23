@@ -14,12 +14,8 @@ import (
 	"github.com/innoai-tech/runtime/cuepkg/tool"
 )
 
-#Project: {
+#Project: imagetool.#Project & {
 	source: core.#Source
-
-	version:  string | *"dev"
-	revision: string | *""
-
 	module: string
 
 	goversion: string
@@ -36,6 +32,9 @@ import (
 	env: [Name=string]:    string | dagger.#Screct
 	mounts: [Name=string]: core.#Mount
 
+	auths:  _
+	mirror: _
+
 	build: {
 		pre: [...string]
 		post: [...string]
@@ -44,6 +43,8 @@ import (
 
 		// dev image 
 		image: debian.#ImageBase
+		image: "auths":  auths
+		image: "mirror": mirror
 
 		for os in goos for arch in goarch {
 			"\(os)/\(arch)": {
@@ -54,12 +55,19 @@ import (
 	}
 
 	devkit: load?: {
+		_image: imagetool.#Pull & {
+			"source": "docker.io/library/docker:20.10.13-alpine3.15"
+			"auths":  auths
+			"mirror": mirror
+		}
+
 		host: _
 
 		for arch in goarch {
 			"\(arch)": {
 				cli.#Load & {
 					"host":  host
+					"input": _image.output
 					"image": build["linux/\(arch)"].input
 					"tag":   "\(module):devkit-\(arch)"
 				}
@@ -81,8 +89,11 @@ import (
 		}
 	}
 
-	ship: imagetool.#Ship & {
-		tag: version
+	version:  _
+	revision: _
+
+	ship: {
+		tag: "\(version)"
 
 		config: {
 			label: {
@@ -110,7 +121,6 @@ import (
 		]
 	}
 
-	// logic  
 	_gomod: #Info & {"source": source.output}
 
 	goversion: _ | *"\(_gomod.go)"
@@ -145,16 +155,14 @@ import (
 		if !isolate {
 			_image: #Image & {
 				build.image
+
 				"goversion": goversion
 
-				// when cgo need, cross-gcc required 
 				if cgo {
-					"packages": {
-						"gcc-x86-64-linux-gnu": {platform: "linux/arm64"}
-						"g++-x86-64-linux-gnu": {platform: "linux/arm64"}
-						"gcc-aarch64-linux-gnu": {platform: "linux/amd64"}
-						"g++-aarch64-linux-gnu": {platform: "linux/amd64"}
-					}
+					packages: "gcc-x86-64-linux-gnu": {platform: "linux/arm64"}
+					packages: "g++-x86-64-linux-gnu": {platform: "linux/arm64"}
+					packages: "gcc-aarch64-linux-gnu": {platform: "linux/amd64"}
+					packages: "g++-aarch64-linux-gnu": {platform: "linux/amd64"}
 				}
 			}
 
@@ -173,6 +181,7 @@ import (
 						"platform":  "\(os)/\(arch)"
 						"goversion": goversion
 					}
+
 					input: _image.output
 				}
 			}

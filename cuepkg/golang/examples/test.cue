@@ -11,8 +11,10 @@ import (
 dagger.#Plan
 
 client: env: {
-	LINUX_MIRROR: string | *""
-	GIT_SHA:      string | *""
+	LINUX_MIRROR:                  string | *""
+	CONTAINER_REGISTRY_PULL_PROXY: string | *""
+
+	GIT_SHA: string | *""
 
 	GH_USERNAME: string | *""
 	GH_PASSWORD: dagger.#Secret
@@ -22,11 +24,21 @@ client: env: {
 	GOSUMDB:   string | *""
 }
 
-mirror: {
-	linux: client.env.LINUX_MIRROR
+helper: {
+	auths: "ghcr.io": {
+		username: client.env.GH_USERNAME
+		secret:   client.env.GH_PASSWORD
+	}
+	mirror: {
+		linux: client.env.LINUX_MIRROR
+		pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
+	}
 }
 
 actions: go: golang.#Project & {
+	mirror: helper.mirror
+	auths:  helper.auths
+
 	source: {
 		path: "."
 		include: [
@@ -36,6 +48,9 @@ actions: go: golang.#Project & {
 	}
 
 	main: "./cmd/hello"
+
+	cgo:     true
+	isolate: false
 
 	goos: ["linux", "darwin"]
 	goarch: ["amd64", "arm64"]
@@ -54,8 +69,6 @@ actions: go: golang.#Project & {
 	build: {
 		pre: ["go mod download"]
 	}
-
-	build: image: "mirror": mirror
 
 	ship: name: "x.io/examples/hello"
 }

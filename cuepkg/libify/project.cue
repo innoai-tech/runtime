@@ -4,14 +4,14 @@ import (
 	"path"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
+	"github.com/innoai-tech/runtime/cuepkg/debian"
 )
 
-#Project: {
-	module:  string
-	version: string
-	name:    string | *path.Base(module)
-
-	revision: string | *string
+#Project: imagetool.#Project & {
+	module:   string
+	name:     string | *path.Base(module)
+	version:  _
+	revision: _
 
 	target: {
 		arch: [...string]
@@ -19,16 +19,14 @@ import (
 		lib: [...string]
 	}
 
-	mirror: imagetool.#Mirror
-
 	base: {
 		source: string
 	}
 
-	packages: [Name=string]: string | *""
+	packages: [Name=string]: debian.#PackageOption
 
-	ship: imagetool.#Ship & {
-		tag: version
+	ship: {
+		tag: "\(version)"
 
 		config: {
 			label: {
@@ -45,19 +43,18 @@ import (
 			},
 		]
 
-		image: {
-			steps: [
-				#Diff & {
-					"base":     base
-					"mirror":   mirror
-					"packages": packages
-				},
-				#Extract & {
-					"name":    name
-					"include": target.include
-					"lib":     target.lib
-				},
-			]
-		}
+		steps: [
+			#Diff & {
+				"base":     base
+				"packages": packages
+				"mirror": ship.mirror
+				"auths":  ship.auths
+			},
+			#Extract & {
+				"name":    name
+				"include": target.include
+				"lib":     target.lib
+			},
+		]
 	}
 }

@@ -34,17 +34,19 @@ actions: {
 	}
 
 	build: debian.#Build & {
+		"mirror": mirror
+		"auths":  auths
 		packages: {
 			//   "git": _
 		}
 		steps: [
-			imagetool.#ImageDep & {
-				dependences: {
-					"ghcr.io/innoai-tech/ffmpeg": "5"
-				}
-				"auths":  auths
-				"mirror": mirror
-			},
+			//   imagetool.#ImageDep & {
+			//    dependences: {
+			//     "ghcr.io/innoai-tech/ffmpeg": "5"
+			//    }
+			//    "auths":  auths
+			//    "mirror": mirror
+			//   },
 			imagetool.#Script & {
 				name: "skip"
 			},

@@ -65,7 +65,7 @@ import (
 				contents: _busybox.output.rootfs
 			}
 		}
-		workdir: "/usr/pkg/\(name)"
+		workdir: "/usr/local/pkg/\(name)"
 		env: "PATH": "/busybox/bin"
 		run: [
 			"ln -s ./\(_ctx.TARGETARCH)/lib ./lib",
@@ -79,7 +79,7 @@ import (
 		"dest":     "/"
 		"source":   "/"
 		"include": [
-			"usr/pkg",
+			"usr/local/pkg",
 		]
 	}
 

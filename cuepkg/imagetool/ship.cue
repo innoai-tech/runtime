@@ -110,8 +110,9 @@ import (
 
 	load?: {
 		_image: #Pull & {
-			"source": (#SourcePatch & {"mirror": mirror, "source": "docker.io/library/docker:20.10.13-alpine3.15"}).output
+			"source": "docker.io/library/docker:20.10.13-alpine3.15"
 			"auths":  auths
+			"mirror": mirror
 		}
 
 		host: _

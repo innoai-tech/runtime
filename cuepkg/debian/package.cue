@@ -7,25 +7,6 @@ import (
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
-#ConfigMirror: {
-	mirror: imagetool.#Mirror
-
-	imagetool.#Script & {
-		name: "config linux mirror"
-		env: {
-			LINUX_MIRROR: mirror.linux
-		}
-		run: [
-			"""
-				if [ "${LINUX_MIRROR}" != "" ]; then
-					sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-					sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-				fi
-				""",
-		]
-	}
-}
-
 #PackageOption: {
 	platform?: string
 	version:   string | *""

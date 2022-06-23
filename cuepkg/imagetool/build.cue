@@ -8,14 +8,16 @@ import (
 	from:      string | *""
 	platform?: string
 	steps: [...docker.#Step]
+
 	auths: [Host=string]: #Auth
 	mirror: #Mirror
 
 	_dag: "0": {
 		if from != "" {
 			#Pull & {
-				"source": (#SourcePatch & {"mirror": mirror, "source": from}).output
+				"source": "\(from)"
 				"auths":  auths
+				"mirror": mirror
 
 				if platform != _|_ {
 					"platform": platform
@@ -25,8 +27,10 @@ import (
 
 		if from == "" {
 			_busybox: #Pull & {
-				"source": (#SourcePatch & {"mirror": mirror, "source": "docker.io/library/busybox"}).output
+				"source": "docker.io/library/busybox"
+
 				"auths":  auths
+				"mirror": mirror
 
 				if platform != _|_ {
 					"platform": platform
@@ -43,9 +47,12 @@ import (
 
 	_dag: {
 		for idx, step in steps {
-			"\(idx+1)": step & {
+			"\(idx+1)": {
 				_output: _dag["\(idx)"].output
-				input:   _output
+
+				step & {
+					input: _output
+				}
 			}
 		}
 	}

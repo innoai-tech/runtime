@@ -10,8 +10,8 @@ import (
 
 #ImageBase: {
 	packages: [pkgName=string]: #PackageOption
-	mirror: imagetool.#Mirror
 	steps: [...docker.#Step]
+	mirror: imagetool.#Mirror
 	auths: [Host=string]: imagetool.#Auth
 	...
 }
@@ -20,25 +20,44 @@ import (
 	source: string | *"docker.io/library/debian:\(#Version)-slim"
 
 	packages: _
-	mirror:   _
 	steps:    _
-	auths:    _
+
+	mirror: _
+	auths:  _
 
 	platform?: string
 
-	_build: imagetool.#Build & {
+	_pull: imagetool.#Pull & {
+		"source": "\(source)"
+		"auths":  auths
+		"mirror": mirror
 		if platform != _|_ {
 			"platform": platform
 		}
-		"from":   "\(source)"
-		"auths":  auths
-		"mirror": mirror
+	}
+
+	_config_mirror: imagetool.#Shell & {
+		input: _pull.output
+		env: {
+			LINUX_MIRROR: mirror.linux
+		}
+		run: """
+				if [ "${LINUX_MIRROR}" != "" ]; then
+					sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+					sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+				fi
+			"""
+	}
+
+	_packages: #InstallPackage & {
+		input:      _config_mirror.output
+		"packages": packages
+	}
+
+	_debian: docker.#Build & {
 		"steps": [
-			#ConfigMirror & {
-				"mirror": mirror
-			},
-			#InstallPackage & {
-				"packages": packages
+			{
+				output: _packages.output
 			},
 			for step in steps {
 				step
@@ -46,5 +65,5 @@ import (
 		]
 	}
 
-	output: _build.output
+	output: _debian.output
 }

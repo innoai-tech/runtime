@@ -12,6 +12,7 @@ import (
 	output: docker.#Image
 
 	name: string | *"script"
+	run: [...string]
 
 	mounts: [Name=string]: core.#Mount
 	env: [string]:         string | dagger.#Secret
@@ -19,20 +20,18 @@ import (
 	user?:    string
 	always?:  bool
 
-	run: [...string]
-
 	_run: "\(name)": {
-		"0": {
-			output: input
-		}
+		"0": output: input
 
 		for idx, script in run {
-			"\(idx+1)": docker.#Step & {
-				_input: _run["\(name)"]["\(idx)"].output
+			"\(idx+1)": {
+				_output: _run["\(name)"]["\(idx)"].output
 
-				docker.#Run & {
-					input: _input
-
+				#Shell & {
+					"input":  _output
+					"run":    script
+					"env":    env
+					"mounts": mounts
 					if workdir != _|_ {
 						"workdir": workdir
 					}
@@ -42,12 +41,6 @@ import (
 					if always != _|_ {
 						"always": always
 					}
-
-					"env":    env
-					"mounts": mounts
-
-					command: name: "sh"
-					command: flags: "-c": script
 				}
 			}
 		}

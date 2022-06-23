@@ -15,16 +15,22 @@ import (
 	base: source: string
 
 	mirror: imagetool.#Mirror
-	packages: [Name=string]: string | *""
+	auths: [Host=string]: imagetool.#Auth
 
-	_base: docker.#Pull & {
-		"source": (imagetool.#SourcePatch & {"mirror": mirror, "source": base.source}).output
+	packages: [Name=string]: debian.#PackageOption
+
+	_base: imagetool.#Pull & {
+		"source": base.source
+		"mirror": mirror
+		"auths":  auths
 	}
 
 	_pkg: debian.#Build & {
 		"platform": input.platform
-		"mirror":   mirror
 		"packages": packages
+
+		"mirror": mirror
+		"auths":  auths
 	}
 
 	_diff: core.#Diff & {

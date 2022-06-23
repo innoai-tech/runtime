@@ -8,11 +8,13 @@ import (
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
-#ViteProject: {
+#ViteProject: imagetool.#Project & {
 	source: core.#Source
 
-	version:  string | *"dev"
-	revision: string | *""
+	version:  _
+	revision: _
+	auths:    _
+	mirror:   _
 
 	viteconfig: string | *"vite.config.ts"
 
@@ -30,6 +32,8 @@ import (
 
 		// dev image setting
 		image: #Image & {
+			"auths":  auths
+			"mirror": mirror
 		}
 
 		_build: docker.#Build & {
