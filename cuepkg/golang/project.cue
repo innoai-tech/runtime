@@ -47,6 +47,7 @@ import (
 		image: "mirror": mirror
 
 		for os in goos for arch in goarch {
+			// Go build binary for spicial platform 
 			"\(os)/\(arch)": {
 				input:  docker.#Image
 				output: docker.#Image
@@ -54,6 +55,7 @@ import (
 		}
 	}
 
+	// Load go build env image to local docker
 	devkit: load?: {
 		_image: imagetool.#Pull & {
 			"source": "docker.io/library/docker:20.10.13-alpine3.15"
@@ -75,6 +77,7 @@ import (
 		}
 	}
 
+	// Archive all built binaries into local (need to define client: `filesytem: "x": write: contents: actions.go.archive.output`)
 	archive: tool.#Export & {
 		archive: true
 

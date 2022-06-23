@@ -75,10 +75,10 @@ import (
 	}
 
 	push: {
-		// Push arch suffix image
 		for platform in platforms {
 			let arch = strings.Split(platform, "/")[1]
 
+			// Push <arch> suffix image
 			"\(arch)": #Push & {
 				"auths": auths
 				"dest":  "\(name):\(tag)-\(arch)"
@@ -86,6 +86,7 @@ import (
 			}
 		}
 
+		// Merge arch suffix image in to mutli-arch images
 		x: {
 			_published: {
 				for platform in platforms {
@@ -110,6 +111,7 @@ import (
 		}
 	}
 
+ 	// Load built image to local docker
 	load?: {
 		_image: #Pull & {
 			"source": "docker.io/library/docker:20.10.13-alpine3.15"
