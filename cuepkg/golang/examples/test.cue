@@ -1,7 +1,7 @@
 package main
 
 import (
-	"encoding/json"
+	"encoding/yaml"
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 
@@ -22,7 +22,11 @@ client: env: {
 	GOSUMDB:   string | *""
 }
 
-actions: go: golang.#Build & {
+mirror: {
+	linux: client.env.LINUX_MIRROR
+}
+
+actions: go: golang.#Project & {
 	source: {
 		path: "."
 		include: [
@@ -51,24 +55,15 @@ actions: go: golang.#Build & {
 		pre: ["go mod download"]
 	}
 
-	build: image: {
-		mirror: client.env.LINUX_MIRROR
-	}
+	build: image: "mirror": mirror
 
-	// ship: {
-	//  host: "ghcr.io"
-	//  auth: {
-	//   username: client.env.GH_USERNAME
-	//   secret:   client.env.GH_PASSWORD
-	//  }
-	// }
+	ship: name: "x.io/examples/hello"
 }
 
 actions: test: core.#Nop & {
-	input: """
-			goversion: \(actions.go.goversion)
-			module: \(actions.go.module)
-			build script: \(actions.go.build.script)
-			build image config: \(json.Marshal(actions.go.build."linux/arm64".output.config))
-			"""
+	input: yaml.Marshal({
+		goversion:   actions.go.goversion
+		module:      actions.go.module
+		imageconfig: actions.go.build."linux/arm64".output.config
+	})
 }

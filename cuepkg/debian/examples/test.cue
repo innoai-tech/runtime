@@ -22,29 +22,7 @@ client: network: {
 	"unix:///var/run/docker.sock": connect: dagger.#Socket
 }
 
-img: debian.#Build & {
-	packages: {
-		"git": _
-	}
-	steps: [
-		imagetool.#Script & {
-			name: "skip"
-		},
-		imagetool.#Script & {
-			name: "echo test"
-			run: [
-				"echo test > /etc/test",
-			]
-		},
-		imagetool.#ImageDep & {
-			dependences: {
-				"ghcr.io/innoai-tech/ffmpeg": "5"
-			}
-			"auths":  auths
-			"mirror": mirror
-		},
-	]
-
+actions: {
 	auths: "ghcr.io": {
 		username: "\(client.env.GH_USERNAME)"
 		secret:   client.env.GH_PASSWORD
@@ -54,15 +32,39 @@ img: debian.#Build & {
 		linux: client.env.LINUX_MIRROR
 		pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
 	}
-}
 
-inimage: core.#ReadFile & {
-	input: img.output.rootfs
-	path:  "/etc/test"
-}
+	build: debian.#Build & {
+		packages: {
+			//   "git": _
+		}
+		steps: [
+			imagetool.#ImageDep & {
+				dependences: {
+					"ghcr.io/innoai-tech/ffmpeg": "5"
+				}
+				"auths":  auths
+				"mirror": mirror
+			},
+			imagetool.#Script & {
+				name: "skip"
+			},
+			imagetool.#Script & {
+				name: "echo test"
+				run: [
+					"echo test > /etc/test",
+				]
+			},
+		]
+	}
 
-actions: test: core.#Nop & {
-	input: """
+	inimage: core.#ReadFile & {
+		input: build.output.rootfs
+		path:  "/etc/test"
+	}
+
+	test: core.#Nop & {
+		input: """
 			loaded: \(inimage.contents)
 			"""
+	}
 }

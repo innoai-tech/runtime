@@ -13,7 +13,7 @@ import (
 	resolveMode: *"default" | "forcePull" | "preferLocal"
 	platform?:   string
 
-	_host: strings.Split(source, "/")[0]
+	_host: strings.Split("\(source)", "/")[0]
 
 	_pull: core.#Pull & {
 		"source":      source

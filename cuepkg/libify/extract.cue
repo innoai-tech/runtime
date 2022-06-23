@@ -26,8 +26,8 @@ import (
 	}
 
 	_dirs: {
-		"/usr/pkg/\(name)/{{ .TARGETARCH }}/include": include
-		"/usr/pkg/\(name)/{{ .TARGETARCH }}/lib":     lib
+		"/usr/local/pkg/\(name)/{{ .TARGETARCH }}/include": include
+		"/usr/local/pkg/\(name)/{{ .TARGETARCH }}/lib":     lib
 	}
 
 	_mv: {

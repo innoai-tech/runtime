@@ -16,7 +16,7 @@ import (
 				strings.TrimPrefix(ref, "refs/tags/v")
 			},
 			if strings.HasPrefix(ref, "refs/heads/") {
-				strings.TrimPrefix(ref, "refs/heads/")
+				strings.Replace(strings.TrimPrefix(ref, "refs/heads/"), "/", "-", -1)
 			},
 			version,
 		][0]

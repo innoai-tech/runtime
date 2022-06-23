@@ -22,7 +22,9 @@ import (
 	run: [...string]
 
 	_run: "\(name)": {
-		"0": output: input
+		"0": {
+			output: input
+		}
 
 		for idx, script in run {
 			"\(idx+1)": docker.#Step & {
