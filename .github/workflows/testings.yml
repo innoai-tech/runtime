@@ -1,0 +1,15 @@
+name: testing
+
+on:
+  push:
+    branches:
+      - "*"
+
+jobs:
+  go:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: docker/setup-qemu-action@v2
+      - run: curl -sSLf https://raw.githubusercontent.com/octohelm/dagger/main/install.sh | sudo sh
+      - run: make test
