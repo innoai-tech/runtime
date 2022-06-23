@@ -25,11 +25,10 @@ import (
 			for name, version in dependences for platform in platforms {
 				"\(name):\(version) for \(platform)": {
 					#Pull & {
-						"auths":  auths
-						"mirror": mirror
-
-						"platform": platform
 						"source":   "\(name):\(version)"
+						"auths":    auths
+						"mirror":   mirror
+						"platform": platform
 					}
 				}
 			}
@@ -38,14 +37,10 @@ import (
 			for name, version in dependences {
 				"\(name):\(version)": {
 					#Pull & {
-						"source": "\(name):\(version)"
-
-						"auths":  auths
-						"mirror": mirror
-
-						if _platform.output != _|_ {
-							"platform": _platform.output
-						}
+						"source":   "\(name):\(version)"
+						"auths":    auths
+						"mirror":   mirror
+						"platform": _platform.output
 					}
 				}
 			}

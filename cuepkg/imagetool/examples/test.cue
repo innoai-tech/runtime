@@ -2,15 +2,14 @@ package main
 
 import (
 	"dagger.io/dagger"
-	"dagger.io/dagger/core"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 dagger.#Plan
 
-actions: build: imagetool.#Build & {
-	platform: "linux/arm64"
+actions: test: imagetool.#Build & {
+//	platform: "linux/arm64"
 	from:     ""
 	steps: [
 		imagetool.#ImageDep & {
@@ -20,8 +19,4 @@ actions: build: imagetool.#Build & {
 			}
 		},
 	]
-}
-
-actions: test: core.#Nop & {
-	input: "\(actions.build.output.platform)"
 }

@@ -39,8 +39,12 @@ import (
 	}
 
 	output: docker.#Image & {
-		rootfs:   _pull.output
-		config:   _pull.config
-		platform: _pull.platform
+		rootfs: _pull.output
+		config: _pull.config
+		// to valid platform
+		"platform": _pull.platform
+		if platform != _|_ {
+			"platform": platform
+		}
 	}
 }
