@@ -39,10 +39,15 @@ import (
 
 			_output: _busybox.output
 
+			_plaform: [
+					if _output.platform != _|_ {
+					_output.platform
+				},
+				platform,
+			][0]
+
 			output: docker.#Scratch & {
-				if _output.platform != _|_ {
-					"platform": _output.platform
-				}
+				"platform": _plaform
 			}
 		}
 	}
