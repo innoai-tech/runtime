@@ -10,17 +10,15 @@ import (
 	ref: string
 	sha: string
 
-	_version: core.#Nop & {
-		input: strings.Replace([
+	_version: strings.Replace([
 			if strings.HasPrefix("\(ref)", "refs/tags/v") {
-				strings.TrimPrefix("\(ref)", "refs/tags/v")
-			},
-			if strings.HasPrefix("\(ref)", "refs/heads/") {
-				strings.TrimPrefix("\(ref)", "refs/heads/")
-			},
-			ref,
-		][0], "/", "-", -1)
-	}
+			strings.TrimPrefix("\(ref)", "refs/tags/v")
+		},
+		if strings.HasPrefix("\(ref)", "refs/heads/") {
+			strings.TrimPrefix("\(ref)", "refs/heads/")
+		},
+		ref,
+	][0], "/", "-", -1)
 
 	_tagSuffix: [
 			if len(sha) >= 8 {
@@ -29,7 +27,7 @@ import (
 		"",
 	][0]
 
-	version: "\(_version.output)"
+	version: "\(_version)"
 	tag:     "\(version)\(_tagSuffix)"
 }
 
