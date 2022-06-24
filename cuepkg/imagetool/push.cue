@@ -12,13 +12,15 @@ import (
 	dest:   docker.#Ref
 	result: docker.#Ref & _push.result
 
-	_host: strings.Split("\(dest)", "/")[0]
+	_host: core.#Nop & {
+		input: strings.Split("\(dest)", "/")[0]
+	}
 
 	_push: core.#Push & {
 		"dest": dest
 
-		if auths["\(_host)"] != _|_ {
-			"auth": auths["\(_host)"]
+		if auths["\(_host.output)"] != _|_ {
+			"auth": auths["\(_host.output)"]
 		}
 	}
 
