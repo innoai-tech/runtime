@@ -35,6 +35,7 @@ import (
 	auths:  _
 	mirror: _
 
+	// Go build binary for special platform 
 	build: {
 		pre: [...string]
 		post: [...string]
@@ -47,7 +48,6 @@ import (
 		image: "mirror": mirror
 
 		for os in goos for arch in goarch {
-			// Go build binary for spicial platform 
 			"\(os)/\(arch)": {
 				input:  docker.#Image
 				output: docker.#Image

@@ -86,7 +86,7 @@ import (
 			}
 		}
 
-		// Merge arch suffix image in to mutli-arch images
+		// Merge pushed arch suffix images into mutli-arch image
 		x: {
 			_published: {
 				for platform in platforms {
