@@ -6,6 +6,7 @@ import (
 	"dagger.io/dagger/core"
 
 	"github.com/innoai-tech/runtime/cuepkg/golang"
+	"github.com/innoai-tech/runtime/cuepkg/tool"
 )
 
 dagger.#Plan
@@ -14,6 +15,7 @@ client: env: {
 	LINUX_MIRROR:                  string | *""
 	CONTAINER_REGISTRY_PULL_PROXY: string | *""
 
+	GIT_REf: string | *"dev"
 	GIT_SHA: string | *""
 
 	GH_USERNAME: string | *""
@@ -35,45 +37,57 @@ helper: {
 	}
 }
 
-actions: go: golang.#Project & {
-	mirror: helper.mirror
-	auths:  helper.auths
+actions: {
+	ver: tool.#VersionFromGit & {
+		ref: "\(client.env.GIT_REf)"
+		sha: "\(client.env.GIT_SHA)"
+	}
 
-	source: {
-		path: "."
-		include: [
-			"cmd/",
-			"go.mod",
+	go: golang.#Project & {
+		mirror: helper.mirror
+		auths:  helper.auths
+
+		source: {
+			path: "."
+			include: [
+				"cmd/",
+				"go.mod",
+			]
+		}
+
+		version:  "\(ver.version)"
+		revision: "\(ver.sha)"
+
+		main: "./cmd/hello"
+
+		// cgo:     true
+		// isolate: false
+
+		goos: ["linux", "darwin"]
+		goarch: ["amd64", "arm64"]
+
+		env: {
+			GOPROXY:   client.env.GOPROXY
+			GOPRIVATE: client.env.GOPRIVATE
+			GOSUMDB:   client.env.GOSUMDB
+		}
+
+		ldflags: [
+			"-s -w",
+			"-X \(go.module)/pkg/version.Revision=\(go.revision)",
 		]
+
+		build: {
+			pre: ["go mod download"]
+		}
+
+		ship: {
+			name: "ghcr.io/innoai-tech/runtime/hello"
+		}
+
+		devkit: load: host: client.network."unix:///var/run/docker.sock".connect
+		ship: load: host:   client.network."unix:///var/run/docker.sock".connect
 	}
-
-	main: "./cmd/hello"
-
-//	cgo:     true
-//	isolate: false
-
-	goos: ["linux", "darwin"]
-	goarch: ["amd64", "arm64"]
-
-	env: {
-		GOPROXY:   client.env.GOPROXY
-		GOPRIVATE: client.env.GOPRIVATE
-		GOSUMDB:   client.env.GOSUMDB
-	}
-
-	ldflags: [
-		"-s -w",
-		"-X \(go.module)/pkg/version.Revision=\(client.env.GIT_SHA)",
-	]
-
-	build: {
-		pre: ["go mod download"]
-	}
-
-	ship: name: "ghcr.io/innoai-tech/runtime/hello"
-
-	devkit: load: host: client.network."unix:///var/run/docker.sock".connect
-	ship: load: host:   client.network."unix:///var/run/docker.sock".connect
 }
 
 client: network: "unix:///var/run/docker.sock": connect: dagger.#Socket

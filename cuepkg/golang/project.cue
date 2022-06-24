@@ -99,7 +99,11 @@ import (
 	revision: _
 
 	ship: {
-		tag: "\(version)"
+		tag: _
+
+		if tag == _|_ {
+			tag: "\(version)"
+		}
 
 		config: {
 			label: {
