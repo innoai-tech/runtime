@@ -110,9 +110,9 @@ import (
 				"org.opencontainers.image.source":   "https://\(module)"
 				"org.opencontainers.image.revision": "\(revision)"
 			}
-			workdir: "/"
-			cmd:     _ | *[]
-			entrypoint: ["/\(binary)"]
+			workdir:    "/"
+			cmd:        _ | *[]
+			entrypoint: _ | *["/\(binary)"]
 		}
 
 		platforms: [
