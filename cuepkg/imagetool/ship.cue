@@ -63,9 +63,13 @@ import (
 		}
 	}
 
+	_dest: core.#Nop & {
+		input: "\(name):\(tag)"
+	}
+
 	// Push all images as multi-arch images
 	pushx: #Push & {
-		"dest":  "\(name):\(tag)"
+		"dest":  _dest.output
 		"auths": auths
 		"images": {
 			for platform in platforms {
@@ -93,31 +97,25 @@ import (
 			// Push <arch> suffix image
 			"\(arch)": #Push & {
 				"auths": auths
-				"dest":  "\(name):\(tag)-\(arch)"
+				"dest":  "\(_dest.output)-\(arch)"
 				"image": _images["\(platform)"].output
 			}
 		}
 
 		// Merge pushed arch suffix images into mutli-arch image
 		x: {
-			_published: {
-				for platform in platforms {
-					let arch = strings.Split(platform, "/")[1]
-
-					"\(platform)": #Pull & {
-						"auths":  auths
-						"source": "\(name):\(tag)-\(arch)"
-					}
-				}
-			}
-
 			#Push & {
-				"dest":  "\(name):\(tag)"
+				"dest":  _dest.output
 				"auths": auths
-				"images": {
-					for platform in platforms {
-						"\(platform)": _published["\(platform)"].output
+
+				for platform in platforms {
+					_pull: "\(platform)": #Pull & {
+						"auths":  auths
+						"mirror": mirror
+						"source": "\(_dest.output)-\(strings.Split(platform, "/")[1])"
 					}
+
+					images: "\(platform)": _pull["\(platform)"].output
 				}
 			}
 		}

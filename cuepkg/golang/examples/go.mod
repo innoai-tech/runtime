@@ -1,3 +1,3 @@
-module test
+module github.com/innoai-tech/runtime
 
 go 1.18

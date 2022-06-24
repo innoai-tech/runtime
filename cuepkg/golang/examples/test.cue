@@ -7,6 +7,7 @@ import (
 
 	"github.com/innoai-tech/runtime/cuepkg/golang"
 	"github.com/innoai-tech/runtime/cuepkg/tool"
+	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
 dagger.#Plan
@@ -18,6 +19,8 @@ client: env: {
 	GIT_REf: string | *"dev"
 	GIT_SHA: string | *""
 
+	CONTAINER_REGISTRY: string | *""
+
 	GH_USERNAME: string | *""
 	GH_PASSWORD: dagger.#Secret
 
@@ -27,7 +30,7 @@ client: env: {
 }
 
 helper: {
-	auths: "ghcr.io": {
+	auths: "\(client.env.CONTAINER_REGISTRY)": {
 		username: client.env.GH_USERNAME
 		secret:   client.env.GH_PASSWORD
 	}
@@ -83,6 +86,15 @@ actions: {
 
 		ship: {
 			name: "ghcr.io/innoai-tech/runtime/hello"
+			tag:  ver.tag
+
+			steps: [
+				imagetool.#ImageDep & {
+					dependencies: {
+						"ghcr.io/innoai-tech/ffmpeg": "5"
+					}
+				},
+			]
 		}
 
 		devkit: load: host: client.network."unix:///var/run/docker.sock".connect

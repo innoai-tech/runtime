@@ -20,15 +20,15 @@ import (
 		ref,
 	][0], "/", "-", -1)
 
-	_tagSuffix: [
-			if len(sha) >= 8 {
+	_tag: "\(_version)\([
+		if len(sha) >= 8 {
 			"-\(strings.SliceRunes(sha, 0, 8))"
 		},
 		"",
-	][0]
+	][0])"
 
-	version: "\(_version)"
-	tag:     "\(version)\(_tagSuffix)"
+	version: _version @dagger(generated)
+	tag:     _tag     @dagger(generated)
 }
 
 #ResolveVersion: {

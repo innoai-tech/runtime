@@ -41,7 +41,7 @@ actions: {
 		}
 		steps: [
 			//   imagetool.#ImageDep & {
-			//    dependences: {
+			//    dependencies: {
 			//     "ghcr.io/innoai-tech/ffmpeg": "5"
 			//    }
 			//    "auths":  auths

@@ -10,8 +10,8 @@ import (
 
 #ImageDep: {
 	input: docker.#Image
-	dependences: [Path=string]: string
-	auths: [Host=string]:       #Auth
+	dependencies: [Path=string]: string
+	auths: [Host=string]:        #Auth
 	mirror: #Mirror
 
 	_platform: core.#Nop & {
@@ -22,7 +22,7 @@ import (
 
 	_pull: {
 		if len(platforms) > 0 {
-			for name, version in dependences for platform in platforms {
+			for name, version in dependencies for platform in platforms {
 				"\(name):\(version) for \(platform)": {
 					#Pull & {
 						"source":   "\(name):\(version)"
@@ -34,7 +34,7 @@ import (
 			}
 		}
 		if len(platforms) == 0 {
-			for name, version in dependences {
+			for name, version in dependencies {
 				"\(name):\(version)": {
 					#Pull & {
 						"source":   "\(name):\(version)"
@@ -79,14 +79,14 @@ import (
 		input: _dep["\(len(_dep)-1)"].output
 		config: {
 			env: {
-				"LD_LIBRARY_PATH": strings.Join([ for n, v in dependences {
+				"LD_LIBRARY_PATH": strings.Join([ for n, v in dependencies {
 					"/usr/local/pkg/\(path.Base(n))/\(strings.Split(input.platform, "/")[1])/lib"
 				}], ":")
 			}
 			for platform in platforms {
 				let _arch = strings.ToUpper(strings.Split(platform, "/")[1])
 
-				env: "LD_LIBRARY_PATH_\(_arch)": strings.Join([ for n, v in dependences {
+				env: "LD_LIBRARY_PATH_\(_arch)": strings.Join([ for n, v in dependencies {
 					"/usr/local/pkg/\(path.Base(n))/\(strings.Split(platform, "/")[1])/lib"
 				}], ":")
 			}

@@ -9,12 +9,12 @@ import (
 dagger.#Plan
 
 actions: test: imagetool.#Build & {
-//	platform: "linux/arm64"
-	from:     ""
+	//    platform: "linux/arm64"
+	from: ""
 	steps: [
 		imagetool.#ImageDep & {
 			//   platforms: ["linux/amd64", "linux/arm64"]
-			dependences: {
+			dependencies: {
 				"ghcr.io/innoai-tech/ffmpeg": "5"
 			}
 		},
