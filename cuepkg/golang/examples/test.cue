@@ -49,8 +49,8 @@ actions: go: golang.#Project & {
 
 	main: "./cmd/hello"
 
-	cgo:     true
-	isolate: false
+//	cgo:     true
+//	isolate: false
 
 	goos: ["linux", "darwin"]
 	goarch: ["amd64", "arm64"]
@@ -70,7 +70,7 @@ actions: go: golang.#Project & {
 		pre: ["go mod download"]
 	}
 
-	ship: name: "x.io/examples/hello"
+	ship: name: "ghcr.io/innoai-tech/runtime/hello"
 
 	devkit: load: host: client.network."unix:///var/run/docker.sock".connect
 	ship: load: host:   client.network."unix:///var/run/docker.sock".connect

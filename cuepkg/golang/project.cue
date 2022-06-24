@@ -55,23 +55,26 @@ import (
 		}
 	}
 
-	// Load go build env image to local docker
-	devkit: load?: {
-		_image: imagetool.#Pull & {
-			"source": "docker.io/library/docker:20.10.13-alpine3.15"
-			"auths":  auths
-			"mirror": mirror
+	devkit?: {
+		load?: {
+			host: _
 		}
 
-		host: _
-
-		for arch in goarch {
-			"\(arch)": {
-				cli.#Load & {
-					"host":  host
-					"input": _image.output
-					"image": build["linux/\(arch)"].input
-					"tag":   "\(module):devkit-\(arch)"
+		if load != _|_ {
+			for arch in goarch {
+				// Load go build env image to local docker
+				"load/linux/\(arch)": {
+					_image: imagetool.#Pull & {
+						"source": "docker.io/library/docker:20.10.13-alpine3.15"
+						"auths":  auths
+						"mirror": mirror
+					}
+					cli.#Load & {
+						"host":  load.host
+						"input": _image.output
+						"image": build["linux/\(arch)"].input
+						"tag":   "\(module):devkit-\(arch)"
+					}
 				}
 			}
 		}

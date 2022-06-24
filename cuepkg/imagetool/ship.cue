@@ -74,7 +74,19 @@ import (
 		}
 	}
 
-	push: {
+	push: _push
+
+	// Merge pushed arch suffix images into mutli-arch image
+	"push/x": _push.x
+
+	for platform in platforms {
+		let arch = strings.Split(platform, "/")[1]
+
+		// Push <arch> suffix image
+		"push/\(platform)": _push["\(arch)"]
+	}
+
+	_push: {
 		for platform in platforms {
 			let arch = strings.Split(platform, "/")[1]
 
@@ -111,24 +123,28 @@ import (
 		}
 	}
 
- 	// Load built image to local docker
 	load?: {
-		_image: #Pull & {
-			"source": "docker.io/library/docker:20.10.13-alpine3.15"
-			"auths":  auths
-			"mirror": mirror
-		}
-
 		host: _
+	}
 
+	if load != _|_ {
 		for platform in platforms {
 			let arch = strings.Split(platform, "/")[1]
 
-			"\(arch)": cli.#Load & {
-				"host":  host
-				"input": _image.output
-				"image": _images["\(platform)"].output
-				"tag":   "\(name):\(tag)-\(arch)"
+			// Load built image to local docker
+			"load/\(platform)": {
+				_image: #Pull & {
+					"source": "docker.io/library/docker:20.10.13-alpine3.15"
+					"auths":  auths
+					"mirror": mirror
+				}
+
+				cli.#Load & {
+					"host":  load.host
+					"input": _image.output
+					"image": _images["\(platform)"].output
+					"tag":   "\(name):\(tag)-\(arch)"
+				}
 			}
 		}
 	}
