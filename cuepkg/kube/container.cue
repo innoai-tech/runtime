@@ -12,7 +12,8 @@ import (
 		tag:        string
 		pullPolicy: core_v1.#PullPolicy | *"\(core_v1.#PullIfNotPresent)"
 	}
-	env: [string]:   string | #EnvFromSource
+	env: [string]: string | {from: #EnvFromSource}
+	envFrom: #EnvFromSource
 	ports: [string]: int32
 	command?: [...string]
 	args?: [...string]
@@ -35,7 +36,7 @@ _fromContainer: {
 	volumes: [N=string]: #Volume
 
 	kube: core_v1.#Container & {
-		for k, v in container if !( k == "image" || k == "ports" || k == "env") {
+		for k, v in container if !( k == "image" || k == "ports" || k == "env" || k == "envFrom") {
 			"\(k)": v
 		}
 		image:           "\(container.image.name):\(container.image.tag)"
@@ -52,6 +53,21 @@ _fromContainer: {
 				][0]
 			},
 		]
+
+		envFrom: [
+			for _type, _refKey in container.envFrom
+			for _ref, _key in _refKey {
+				[
+					if _type == "secret" {
+						{secretRef: name: "\(_ref)"}
+					},
+					if _type == "configMap" {
+						{configMapRef: name: "\(_ref)"}
+					},
+				][0]
+			},
+		]
+
 		env: [
 			for _name, _value in container.env {
 				let _isStrValue = (_value & string) != _|_
@@ -103,10 +119,12 @@ _fromContainer: {
 }
 
 #EnvFromSource: {
-	from: configMap: [Name=string]:     string
-	from: secret: [Name=string]:        string
-	from: field: [Name=string]:         string
-	from: resourceField: [Name=string]: string
+	configMap: [Name=string]: string
+	secret: [Name=string]:    string
+	// don't use this in envFrom
+	field: [Name=string]: string
+	// don't use this in envFrom
+	resourceField: [Name=string]: string
 }
 
 #ProbeHttpGet: core_v1.#Probe & {

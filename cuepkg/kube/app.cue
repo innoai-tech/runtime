@@ -17,26 +17,17 @@ import (
 	initContainers: [Name=string]: #Container & {
 		name: Name
 
-		for n, v in config {
-			[
-				if strings.HasSuffix(strings.ToUpper(n), "PASSWORD") {
-					{env: "\(n)": from: secret: "\(app.name)": "\(n)"}
-				},
-				{env: "\(n)": from: configMap: "\(app.name)": "\(n)"},
-			][0]
+		envFrom: {
+			configMap: "\(app.name)": _
+			secret: "\(app.name)":    _
 		}
 	}
 
 	containers: [Name=string]: #Container & {
 		name: Name
 
-		for n, v in config {
-			[
-				if strings.HasSuffix(strings.ToUpper(n), "PASSWORD") {
-					{env: "\(n)": from: secret: "\(app.name)": "\(n)"}
-				},
-				{env: "\(n)": from: configMap: "\(app.name)": "\(n)"},
-			][0]
+		envFrom: {
+			secret: "\(app.name)": _
 		}
 	}
 
@@ -53,13 +44,12 @@ import (
 	serviceAccount?: #ServiceAccount
 
 	kube: #Spec & {
+		secrets: "\(app.name)": stringData: {}
+
 		if len(config) > 0 {
 			for k, v in config {
 				[
-					if strings.HasSuffix(strings.ToUpper(k), "PASSWORD") {
-						{secrets: "\(app.name)-config": stringData: "\(k)": v}
-					},
-					{configMaps: "\(app.name)-config": data: "\(k)": v},
+					{secrets: "\(app.name)": stringData: "\(k)": v},
 				][0]
 			}
 		}

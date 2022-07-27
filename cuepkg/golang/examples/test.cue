@@ -19,8 +19,6 @@ client: env: {
 	GIT_REf: string | *"dev"
 	GIT_SHA: string | *""
 
-	CONTAINER_REGISTRY: string | *""
-
 	GH_USERNAME: string | *""
 	GH_PASSWORD: dagger.#Secret
 
@@ -30,7 +28,7 @@ client: env: {
 }
 
 helper: {
-	auths: "\(client.env.CONTAINER_REGISTRY)": {
+	auths: "ghcr.io": {
 		username: client.env.GH_USERNAME
 		secret:   client.env.GH_PASSWORD
 	}
