@@ -12,7 +12,7 @@ import (
 
 	platforms: [...string] | *["linux/amd64", "linux/arm64"]
 
-	config: [Name=string]: string
+	config: [Name=string]: _
 
 	initContainers: [Name=string]: #Container & {
 		name: Name
@@ -49,7 +49,7 @@ import (
 		if len(config) > 0 {
 			for k, v in config {
 				[
-					{secrets: "\(app.name)": stringData: "\(k)": v},
+					{secrets: "\(app.name)": stringData: "\(k)": "\(v)"},
 				][0]
 			}
 		}
