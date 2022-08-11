@@ -70,6 +70,11 @@ import (
 			]
 		}
 
-		output: _build.output
+		_output: core.#Subdir & {
+			input: _build.output.rootfs
+			path:  "/output"
+		}
+
+		output: _output.output
 	}
 }
