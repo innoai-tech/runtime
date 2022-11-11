@@ -6,7 +6,6 @@ import (
 
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
-	"universe.dagger.io/docker/cli"
 )
 
 #Platform: {
@@ -121,27 +120,24 @@ import (
 		}
 	}
 
-	load?: {
-		host: _
+	save?: {
+		name: string
 	}
 
-	if load != _|_ {
+	if save != _|_ {
 		for platform in platforms {
 			let arch = strings.Split(platform, "/")[1]
 
 			// Load built image to local docker
-			"load/\(platform)": {
-				_image: #Pull & {
-					"source": "docker.io/library/docker:20.10.13-alpine3.15"
-					"auths":  auths
-					"mirror": mirror
-				}
+			save: "\(platform)": {
+				_image: _images["\(platform)"].output
 
-				cli.#Load & {
-					"host":  load.host
-					"input": _image.output
-					"image": _images["\(platform)"].output
-					"tag":   "\(name):\(tag)-\(arch)"
+				core.#Export & {
+					"path":   "/\(save.name)-\(tag)-\(arch).image.tar"
+					"input":  _image.rootfs
+					"config": _image.config
+					"type":   "oci"
+					"tag":    "\(name):\(tag)-\(arch)"
 				}
 			}
 		}

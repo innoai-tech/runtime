@@ -7,7 +7,6 @@ import (
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
 	"universe.dagger.io/docker"
-	"universe.dagger.io/docker/cli"
 
 	"github.com/innoai-tech/runtime/cuepkg/debian"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
@@ -56,24 +55,22 @@ import (
 	}
 
 	devkit?: {
-		load?: {
-			host: _
+		save?: {
+			name: _
 		}
 
-		if load != _|_ {
+		if save != _|_ {
 			for arch in goarch {
 				// Load go build env image to local docker
-				"load/linux/\(arch)": {
-					_image: imagetool.#Pull & {
-						"source": "docker.io/library/docker:20.10.13-alpine3.15"
-						"auths":  auths
-						"mirror": mirror
-					}
-					cli.#Load & {
-						"host":  load.host
-						"input": _image.output
-						"image": build["linux/\(arch)"].input
-						"tag":   "\(module):devkit-\(arch)"
+				save: "linux/\(arch)": {
+					_image: build["linux/\(arch)"].input
+
+					core.#Export & {
+						"path":   "/\(save.name)-devkit-\(arch).image.tar"
+						"input":  _image.rootfs
+						"config": _image.config
+						"type":   "oci"
+						"tag":    "\(module):devkit-\(arch)"
 					}
 				}
 			}
