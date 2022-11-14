@@ -119,12 +119,12 @@ _fromContainer: {
 }
 
 #EnvFromSource: {
-	configMap: [Name=string]: string
-	secret: [Name=string]:    string
+	configMap: [Name=string]: string | *""
+	secret: [Name=string]:    string | *""
 	// don't use this in envFrom
-	field: [Name=string]: string
+	field: [Name=string]: string | *""
 	// don't use this in envFrom
-	resourceField: [Name=string]: string
+	resourceField: [Name=string]: string | *""
 }
 
 #ProbeHttpGet: core_v1.#Probe & {

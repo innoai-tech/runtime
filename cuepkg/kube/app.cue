@@ -86,9 +86,8 @@ import (
 					for n, port in s.ports {
 						name:       n
 						targetPort: n
-
 						[
-							if strings.HasPrefix(s.name, "udp") {
+							if strings.HasPrefix(n, "udp") {
 								{protocol: "UDP"}
 							},
 							{protocol: "TCP"},

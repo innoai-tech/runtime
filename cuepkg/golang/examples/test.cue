@@ -94,13 +94,8 @@ actions: {
 				},
 			]
 		}
-
-		devkit: load: host: client.network."unix:///var/run/docker.sock".connect
-		ship: load: host:   client.network."unix:///var/run/docker.sock".connect
 	}
 }
-
-client: network: "unix:///var/run/docker.sock": connect: dagger.#Socket
 
 actions: test: core.#Nop & {
 	input: yaml.Marshal({
