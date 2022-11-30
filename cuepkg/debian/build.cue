@@ -9,6 +9,7 @@ import (
 #Version: "bullseye" // debian 11
 
 #ImageBase: {
+	debianversion: string | *#Version
 	packages: [pkgName=string]: #PackageOption
 	steps: [...docker.#Step]
 	mirror: imagetool.#Mirror
@@ -17,7 +18,8 @@ import (
 }
 
 #Build: #ImageBase & {
-	source: string | *"docker.io/library/debian:\(#Version)-slim"
+	source:        string | *"docker.io/library/debian:\(debianversion)-slim"
+	debianversion: _
 
 	packages: _
 	steps:    _
