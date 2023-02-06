@@ -118,10 +118,16 @@ import (
 			},
 		]
 
+		_binary: {
+			for p in platforms {
+				"\(p)": build["\(p)"].output
+			}
+		}
+
 		postSteps: [
 			docker.#Copy & {
 				input:      _
-				"contents": build["\(input.platform)"].output.rootfs
+				"contents": _binary["\(input.platform)"].rootfs
 				"source":   "/output"
 				"dest":     "/"
 			},
