@@ -47,7 +47,7 @@ import (
 }
 
 #Export: {
-	directories: [Path=string]: core.#FS
+	directories: [Path=string]: dagger.#FS
 	archive: bool | *false
 
 	_directories: {

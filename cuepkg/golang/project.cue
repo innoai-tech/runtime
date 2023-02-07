@@ -54,29 +54,6 @@ import (
 		}
 	}
 
-	devkit?: {
-		save?: {
-			name: _
-		}
-
-		if save != _|_ {
-			for arch in goarch {
-				// Load go build env image to local docker
-				save: "linux/\(arch)": {
-					_image: build["linux/\(arch)"].input
-
-					core.#Export & {
-						"path":   "/\(save.name)-devkit-\(arch).image.tar"
-						"input":  _image.rootfs
-						"config": _image.config
-						"type":   "oci"
-						"tag":    "\(module):devkit-\(arch)"
-					}
-				}
-			}
-		}
-	}
-
 	// Archive all built binaries into local (need to define client: `filesytem: "x": write: contents: actions.go.archive.output`)
 	archive: tool.#Export & {
 		archive: true
@@ -96,11 +73,7 @@ import (
 	revision: _
 
 	ship: {
-		tag: _
-
-		if tag == _|_ {
-			tag: "\(version)"
-		}
+		tag: _ | *"\(version)"
 
 		config: {
 			label: {

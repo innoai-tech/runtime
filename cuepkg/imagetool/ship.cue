@@ -62,13 +62,11 @@ import (
 		}
 	}
 
-	_dest: core.#Nop & {
-		input: "\(name):\(tag)"
-	}
+	_dest: "\(name):\(tag)"
 
 	// Push all images as multi-arch images
 	pushx: #Push & {
-		"dest":  _dest.output
+		"dest":  _dest
 		"auths": auths
 		"images": {
 			for platform in platforms {
@@ -96,7 +94,7 @@ import (
 			// Push <arch> suffix image
 			"\(arch)": #Push & {
 				"auths": auths
-				"dest":  "\(_dest.output)-\(arch)"
+				"dest":  "\(_dest)-\(arch)"
 				"image": _images["\(platform)"].output
 			}
 		}
@@ -104,40 +102,17 @@ import (
 		// Merge pushed arch suffix images into mutli-arch image
 		x: {
 			#Push & {
-				"dest":  _dest.output
+				"dest":  _dest
 				"auths": auths
 
 				for platform in platforms {
 					_pull: "\(platform)": #Pull & {
 						"auths":  auths
 						"mirror": mirror
-						"source": "\(_dest.output)-\(strings.Split(platform, "/")[1])"
+						"source": "\(_dest)-\(strings.Split(platform, "/")[1])"
 					}
 
 					images: "\(platform)": _pull["\(platform)"].output
-				}
-			}
-		}
-	}
-
-	save?: {
-		name: string
-	}
-
-	if save != _|_ {
-		for platform in platforms {
-			let arch = strings.Split(platform, "/")[1]
-
-			// Load built image to local docker
-			save: "\(platform)": {
-				_image: _images["\(platform)"].output
-
-				core.#Export & {
-					"path":   "/\(save.name)-\(tag)-\(arch).image.tar"
-					"input":  _image.rootfs
-					"config": _image.config
-					"type":   "oci"
-					"tag":    "\(name):\(tag)-\(arch)"
 				}
 			}
 		}
