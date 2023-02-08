@@ -55,17 +55,28 @@ import (
 	}
 
 	// Archive all built binaries into local (need to define client: `filesytem: "x": write: contents: actions.go.archive.output`)
-	archive: tool.#Export & {
-		archive: true
+	archive: {
+		_binary: {
+			for os in goos for arch in goarch {
+				"\(binary)_\(os)_\(arch)": {
+					_image: build["\(os)/\(arch)"].output
 
-		for os in goos for arch in goarch {
-			_copy: "\(os)/\(arch)": core.#Copy & {
-				input:    dagger.#Scratch
-				contents: build["\(os)/\(arch)"].output.rootfs
-				source:   "/output"
-				dest:     "/"
+					core.#Copy & {
+						input:    dagger.#Scratch
+						contents: _image.rootfs
+						source:   "/output"
+						dest:     "/"
+					}
+				}
 			}
-			directories: "\(binary)_\(os)_\(arch)": _copy["\(os)/\(arch)"].output
+		}
+
+		tool.#Export & {
+			archive: true
+
+			for name, fs in _binary {
+				directories: "\(name)": fs.output
+			}
 		}
 	}
 
