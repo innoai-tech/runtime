@@ -31,7 +31,10 @@ import (
 		}
 	}
 
-	run: #Run & {
+	_image: #Image & {}
+
+	run: docker.#Run & {
+		input:  _image.output
 		mounts: _caches & {
 			for p, f in _files {
 				"\(p)": core.#Mount & {

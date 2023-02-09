@@ -5,6 +5,8 @@ import (
 
 	"dagger.io/dagger"
 	"dagger.io/dagger/core"
+
+	"universe.dagger.io/docker"
 )
 
 #Apply: {
@@ -13,16 +15,17 @@ import (
 
 	flags: [K=string]: string
 
-	_files: [Path=string]: core.#WriteFile & {
-		input: dagger.#Scratch
-	}
-
-	_files: "/src/kubepkg.json": {
+	_files: "/src/kubepkg.json": core.#WriteFile & {
+		input:    dagger.#Scratch
 		path:     "kubepkg.json"
 		contents: json.Marshal(kubepkg)
 	}
 
-	#Run & {
+	_image: #Image & {}
+
+	_apply: docker.#Run & {
+		input: _image.output
+
 		mounts: {
 			"kubeconfig": core.#Mount & {
 				dest:     "/run/secrets/kubeconfig"
@@ -48,4 +51,6 @@ import (
 			]
 		}
 	}
+
+	output: _apply.output
 }
