@@ -2,17 +2,14 @@ package main
 
 import (
 	"encoding/yaml"
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
 
+	"wagon.octohelm.tech/core"
 	"github.com/innoai-tech/runtime/cuepkg/golang"
 	"github.com/innoai-tech/runtime/cuepkg/tool"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
-dagger.#Plan
-
-client: env: {
+client: env: core.#ClientEnv & {
 	LINUX_MIRROR:                  string | *""
 	CONTAINER_REGISTRY_PULL_PROXY: string | *""
 
@@ -20,21 +17,17 @@ client: env: {
 	GIT_SHA: string | *""
 
 	GH_USERNAME: string | *""
-	GH_PASSWORD: dagger.#Secret
+	GH_PASSWORD: core.#Secret
 
 	GOPROXY:   string | *""
 	GOPRIVATE: string | *""
 	GOSUMDB:   string | *""
 }
 
-helper: {
-	auths: "ghcr.io": {
+setting: core.#Setting & {
+	registry: "ghcr.io": auth: {
 		username: client.env.GH_USERNAME
 		secret:   client.env.GH_PASSWORD
-	}
-	mirror: {
-		linux: client.env.LINUX_MIRROR
-		pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
 	}
 }
 
@@ -45,9 +38,6 @@ actions: {
 	}
 
 	go: golang.#Project & {
-		mirror: helper.mirror
-		auths:  helper.auths
-
 		source: {
 			path: "."
 			include: [

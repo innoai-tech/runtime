@@ -1,9 +1,8 @@
 package debian
 
 import (
-	"dagger.io/dagger/core"
-
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
@@ -24,6 +23,23 @@ import (
 		}
 
 		if len(packages) > 0 {
+			_client_env: core.#ClientEnv & {
+				LINUX_MIRROR: _ | *""
+			}
+
+			_config_mirror: imagetool.#Shell & {
+				"input": input
+				"env": {
+					LINUX_MIRROR: _client_env.LINUX_MIRROR
+				}
+				"run": """
+						if [ "${LINUX_MIRROR}" != "" ]; then
+							sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+							sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+						fi
+					"""
+			}
+
 			_dirs: {
 				"varlog":    "/var/log"
 				"apt_cache": "/var/apt/cache"
@@ -31,7 +47,7 @@ import (
 			}
 
 			imagetool.#Script & {
-				"input": input
+				"input": _config_mirror.output
 				"mounts": {
 					for id, dir in _dirs {
 						"\(id)": core.#Mount & {

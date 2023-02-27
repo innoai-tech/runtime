@@ -4,9 +4,9 @@ import (
 	"strings"
 	"encoding/yaml"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/kubepkg"
 )
@@ -27,7 +27,7 @@ import (
 
 	_files: [Path=string]: core.#WriteFile & {
 		path:  Path
-		input: dagger.#Scratch
+		input: core.#Scratch
 	}
 
 	_files: {

@@ -1,8 +1,7 @@
 package debian
 
 import (
-
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/docker"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
@@ -22,8 +21,6 @@ import (
 
 	packages: _
 	steps:    _
-
-	mirror: _
 	auths:  _
 
 	platform?: string
@@ -31,27 +28,13 @@ import (
 	_pull: imagetool.#Pull & {
 		"source": "\(source)"
 		"auths":  auths
-		"mirror": mirror
 		if platform != _|_ {
 			"platform": platform
 		}
 	}
 
-	_config_mirror: imagetool.#Shell & {
-		input: _pull.output
-		env: {
-			LINUX_MIRROR: mirror.linux
-		}
-		run: """
-				if [ "${LINUX_MIRROR}" != "" ]; then
-					sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-					sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-				fi
-			"""
-	}
-
 	_packages: #InstallPackage & {
-		input:      _config_mirror.output
+		input:      _pull.output
 		"packages": packages
 	}
 

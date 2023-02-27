@@ -1,9 +1,9 @@
 package node
 
 import (
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
@@ -18,7 +18,7 @@ import (
 
 	viteconfig: string | *"vite.config.ts"
 
-	env: [Key=string]:     string | dagger.#Secret
+	env: [Key=string]:     string | core.#Secret
 	mounts: [Name=string]: core.#Mount
 	workdir: "/app"
 

@@ -1,8 +1,8 @@
 package imagetool
 
-import "dagger.io/dagger"
+import "wagon.octohelm.tech/core"
 
 #Auth: {
 	username: string
-	secret:   dagger.#Secret
+	secret:   core.#Secret
 }

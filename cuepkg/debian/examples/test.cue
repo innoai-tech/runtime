@@ -1,25 +1,14 @@
 package main
 
 import (
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-
+	"wagon.octohelm.tech/core"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 	"github.com/innoai-tech/runtime/cuepkg/debian"
 )
 
-dagger.#Plan
-
-client: env: {
-	LINUX_MIRROR:                  string | *""
-	CONTAINER_REGISTRY_PULL_PROXY: string | *""
-
+client: env: core.#ClientEnv & {
 	GH_USERNAME: string | *""
-	GH_PASSWORD: dagger.#Secret
-}
-
-client: network: {
-	"unix:///var/run/docker.sock": connect: dagger.#Socket
+	GH_PASSWORD: core.#Secret
 }
 
 actions: {
@@ -28,14 +17,8 @@ actions: {
 		secret:   client.env.GH_PASSWORD
 	}
 
-	mirror: {
-		linux: client.env.LINUX_MIRROR
-		pull:  client.env.CONTAINER_REGISTRY_PULL_PROXY
-	}
-
 	build: debian.#Build & {
-		"mirror": mirror
-		"auths":  auths
+		"auths": auths
 		packages: {
 			//   "git": _
 		}

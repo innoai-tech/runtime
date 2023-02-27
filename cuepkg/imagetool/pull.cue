@@ -3,8 +3,8 @@ package imagetool
 import (
 	"strings"
 
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 )
 
 #Pull: {

@@ -1,7 +1,7 @@
 package imagetool
 
 import (
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/docker"
 )
 
 #Shell: {

@@ -3,9 +3,9 @@ package kubepkg
 import (
 	"encoding/json"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 )
 
 #Export: {
@@ -15,7 +15,7 @@ import (
 	env:      docker.#Run.env
 
 	_files: [Path=string]: core.#WriteFile & {
-		input: dagger.#Scratch
+		input: core.#Scratch
 	}
 
 	_files: "/src/kubepkg.json": {

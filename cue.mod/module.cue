@@ -1,9 +1,8 @@
 module: "github.com/innoai-tech/runtime"
 
 require: {
-	"dagger.io":          "v0.3.0"
-	"k8s.io/api":         "v0.25.4"
-	"universe.dagger.io": "v0.3.0"
+	"k8s.io/api":          "v0.25.4"
+	"wagon.octohelm.tech": "v0.0.0-20200202235959-3d91e2e3161f"
 }
 
 require: {

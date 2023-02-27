@@ -1,10 +1,8 @@
 package imagetool
 
 import (
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 )
 
 #Script: {
@@ -15,7 +13,7 @@ import (
 	run: [...string]
 
 	mounts: [Name=string]: core.#Mount
-	env: [string]:         string | dagger.#Secret
+	env: [string]:         string | core.#Secret
 	workdir?: string
 	user?:    string
 	always?:  bool

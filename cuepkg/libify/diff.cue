@@ -1,8 +1,8 @@
 package libify
 
 import (
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/debian"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"

@@ -3,13 +3,12 @@ package tool
 import (
 	"path"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 )
 
 #Tar: {
-	contents: dagger.#FS
+	contents: core.#FS
 	source:   string | *"/"
 	dest:     string
 
@@ -37,7 +36,7 @@ import (
 	}
 
 	_copy: core.#Copy & {
-		input:    dagger.#Scratch
+		input:    core.#Scratch
 		contents: _run.output.rootfs
 		source:   "/output"
 		dest:     "/"
@@ -47,13 +46,13 @@ import (
 }
 
 #Export: {
-	directories: [Path=string]: dagger.#FS
+	directories: [Path=string]: core.#FS
 	archive: bool | *false
 
 	_directories: {
 		for p, fs in directories {
 			"\(p)": core.#Copy & {
-				input:    dagger.#Scratch
+				input:    core.#Scratch
 				contents: fs
 				source:   "/"
 				dest:     "/\(p)"

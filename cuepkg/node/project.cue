@@ -3,9 +3,9 @@ package node
 import (
 
 	"path"
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
@@ -18,7 +18,7 @@ import (
 	auths:    _
 	mirror:   _
 
-	env: [Key=string]:     string | dagger.#Secret
+	env: [Key=string]:     string | core.#Secret
 	mounts: [Name=string]: core.#Mount
 	workdir: "/app"
 

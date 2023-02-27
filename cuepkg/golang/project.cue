@@ -4,9 +4,8 @@ import (
 	"strings"
 	"path"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/debian"
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
@@ -28,7 +27,7 @@ import (
 
 	main:   string | *"."
 	binary: string | *path.Base(main)
-	env: [Name=string]:    string | dagger.#Screct
+	env: [Name=string]:    string | core.#Screct
 	mounts: [Name=string]: core.#Mount
 
 	auths:  _
@@ -62,7 +61,7 @@ import (
 					_image: build["\(os)/\(arch)"].output
 
 					core.#Copy & {
-						input:    dagger.#Scratch
+						input:    core.#Scratch
 						contents: _image.rootfs
 						source:   "/output"
 						dest:     "/"
@@ -122,6 +121,18 @@ import (
 
 	goversion: _ | *"\(_gomod.go)"
 	module:    _ | *"\(_gomod.module)"
+
+	_goenv: core.#ClientEnv & {
+		GOPROXY:   _ | *""
+		GOPRIVATE: _ | *""
+		GOSUMDB:   _ | *""
+	}
+
+	env: {
+		GOPROXY:   _goenv.GOPROXY
+		GOPRIVATE: _goenv.GOPRIVATE
+		GOSUMDB:   _goenv.GOSUMDB
+	}
 
 	env: {
 		if cgo {

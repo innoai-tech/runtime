@@ -3,20 +3,20 @@ package kubepkg
 import (
 	"encoding/json"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
+	"wagon.octohelm.tech/core"
+	"wagon.octohelm.tech/core"
 
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/docker"
 )
 
 #Apply: {
 	kubepkg:    #KubePkg
-	kubeconfig: dagger.#Secret
+	kubeconfig: core.#Secret
 
 	flags: [K=string]: string
 
 	_files: "/src/kubepkg.json": core.#WriteFile & {
-		input:    dagger.#Scratch
+		input:    core.#Scratch
 		path:     "kubepkg.json"
 		contents: json.Marshal(kubepkg)
 	}

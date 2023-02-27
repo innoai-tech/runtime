@@ -3,7 +3,7 @@ package tool
 import (
 	"strings"
 
-	"dagger.io/dagger/core"
+	"wagon.octohelm.tech/core"
 )
 
 #VersionFromGit: {
@@ -27,8 +27,8 @@ import (
 		"",
 	][0])"
 
-	version: _version @dagger(generated)
-	tag:     _tag     @dagger(generated)
+	version: _version @wagon(generated)
+	tag:     _tag     @wagon(generated)
 }
 
 #ResolveVersion: {

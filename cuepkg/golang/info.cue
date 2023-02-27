@@ -3,12 +3,11 @@ package golang
 import (
 	"regexp"
 
-	"dagger.io/dagger"
-	"dagger.io/dagger/core"
+	"wagon.octohelm.tech/core"
 )
 
 #Info: {
-	source: dagger.#FS
+	source: core.#FS
 
 	_read_gomod: core.#ReadFile & {
 		input: source

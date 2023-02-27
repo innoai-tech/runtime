@@ -1,7 +1,7 @@
 package node
 
 import (
-	"dagger.io/dagger"
+	"wagon.octohelm.tech/core"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
@@ -9,7 +9,7 @@ import (
 #ConfigPrivateRegistry: {
 	scope: string
 	host:  string
-	token: dagger.#Secret
+	token: core.#Secret
 
 	imagetool.#Script & {
 		name: "config private registry"

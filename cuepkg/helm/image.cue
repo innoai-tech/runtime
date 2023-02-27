@@ -1,7 +1,7 @@
 package helm
 
 import (
-	"universe.dagger.io/docker"
+	"wagon.octohelm.tech/docker"
 )
 
 #Image: {
