@@ -61,7 +61,6 @@ import (
 					_image: build["\(os)/\(arch)"].output
 
 					core.#Copy & {
-						input:    core.#Scratch
 						contents: _image.rootfs
 						source:   "/output"
 						dest:     "/"

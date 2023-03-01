@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"wagon.octohelm.tech/core"
-	"wagon.octohelm.tech/core"
 	"wagon.octohelm.tech/docker"
 )
 
@@ -15,7 +14,6 @@ import (
 	env:      docker.#Run.env
 
 	_files: [Path=string]: core.#WriteFile & {
-		input: core.#Scratch
 	}
 
 	_files: "/src/kubepkg.json": {

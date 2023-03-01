@@ -36,7 +36,6 @@ import (
 	}
 
 	_copy: core.#Copy & {
-		input:    core.#Scratch
 		contents: _run.output.rootfs
 		source:   "/output"
 		dest:     "/"
@@ -52,7 +51,6 @@ import (
 	_directories: {
 		for p, fs in directories {
 			"\(p)": core.#Copy & {
-				input:    core.#Scratch
 				contents: fs
 				source:   "/"
 				dest:     "/\(p)"

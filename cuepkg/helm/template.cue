@@ -5,7 +5,6 @@ import (
 	"encoding/yaml"
 
 	"wagon.octohelm.tech/core"
-	"wagon.octohelm.tech/core"
 	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/kubepkg"
@@ -27,7 +26,6 @@ import (
 
 	_files: [Path=string]: core.#WriteFile & {
 		path:  Path
-		input: core.#Scratch
 	}
 
 	_files: {

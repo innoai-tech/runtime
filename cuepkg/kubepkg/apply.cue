@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 
 	"wagon.octohelm.tech/core"
-	"wagon.octohelm.tech/core"
 
 	"wagon.octohelm.tech/docker"
 )
@@ -16,7 +15,6 @@ import (
 	flags: [K=string]: string
 
 	_files: "/src/kubepkg.json": core.#WriteFile & {
-		input:    core.#Scratch
 		path:     "kubepkg.json"
 		contents: json.Marshal(kubepkg)
 	}

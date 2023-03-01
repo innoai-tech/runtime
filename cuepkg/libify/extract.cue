@@ -5,7 +5,6 @@ import (
 	"text/template"
 
 	"wagon.octohelm.tech/core"
-	"wagon.octohelm.tech/core"
 	"wagon.octohelm.tech/docker"
 
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
@@ -33,7 +32,6 @@ import (
 	_mv: {
 		for dest, include in _dirs for from in include {
 			"\(from)/* => \(dest)": core.#Copy & {
-				"input":    core.#Scratch
 				"contents": input.rootfs
 				"source":   template.Execute("\(from)", _ctx)
 				"dest":     template.Execute("\(dest)", _ctx)
@@ -74,7 +72,6 @@ import (
 	}
 
 	_flat: core.#Copy & {
-		"input":    core.#Scratch
 		"contents": _ln.output.rootfs
 		"dest":     "/"
 		"source":   "/"
