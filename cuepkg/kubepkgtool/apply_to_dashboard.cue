@@ -56,7 +56,6 @@ import (
 				--header "Content-Type: application/json" \\
 				--header "Authorization: Bearer ${KUBEPKG_ACCESS_TOKEN}" \\
 				--data "@/src/kubepkg.json" \\
-				--verbose \\
 				--fail \\
 			"${KUBEPKG_DASHBOARD_ENDPOINT}/api/kubepkg-dashboard/v0/groups/\(target.group)/envs/\(target.env)/deployments"
 			"""
