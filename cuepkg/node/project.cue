@@ -12,10 +12,9 @@ import (
 #Project: imagetool.#Project & {
 	source: core.#Source
 
-	version:  _
-	revision: _
-	auths:    _
-	mirror:   _
+	version: _
+
+	targetarch: [...string] | *["amd64", "arm64"]
 
 	env: [Key=string]:     string | core.#Secret
 	mounts: [Name=string]: core.#Mount
@@ -31,8 +30,6 @@ import (
 
 		// dev image setting
 		image: #Image & {
-			"auths":  auths
-			"mirror": mirror
 		}
 
 		_build: docker.#Build & {
@@ -85,5 +82,28 @@ import (
 		}
 
 		output: _output.output.rootfs
+	}
+
+	ship: {
+		platforms: [
+			for arch in targetarch {
+				"linux/\(arch)"
+			},
+		]
+
+		_assets: {
+			for p in platforms {
+				"\(p)": build.output
+			}
+		}
+
+		postSteps: [
+			docker.#Copy & {
+				input:      _
+				"contents": _assets["\(input.platform)"]
+				"source":   "/"
+				"dest":     "/"
+			},
+		]
 	}
 }
