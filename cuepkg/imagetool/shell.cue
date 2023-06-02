@@ -5,11 +5,12 @@ import (
 )
 
 #Shell: {
-	run: string
+	shell: string | *"sh"
+	run:   string
 
 	docker.#Run & {
 		"command": {
-			"name": "sh"
+			"name": "\(shell)"
 			"flags": "-c": "\(run)"
 		}
 	}

@@ -1,7 +1,6 @@
 package node
 
 import (
-
 	"path"
 	"wagon.octohelm.tech/core"
 	"wagon.octohelm.tech/docker"

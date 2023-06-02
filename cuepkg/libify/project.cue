@@ -46,9 +46,8 @@ import (
 		steps: [
 			#Diff & {
 				"base":     base
+				"name":     name
 				"packages": packages
-				"mirror": ship.mirror
-				"auths":  ship.auths
 			},
 			#Extract & {
 				"name":    name

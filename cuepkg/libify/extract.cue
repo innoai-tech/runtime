@@ -47,32 +47,8 @@ import (
 		]
 	}
 
-	_busybox: docker.#Pull & {
-		source: "busybox"
-	}
-
-	_ln: imagetool.#Script & {
-		input: docker.#Image & {
-			rootfs:   _merge.output
-			platform: input.platform
-			config: {}
-		}
-		mounts: {
-			busybox: core.#Mount & {
-				dest:     "/busybox"
-				contents: _busybox.output.rootfs
-			}
-		}
-		workdir: "/usr/local/pkg/\(name)"
-		env: "PATH": "/busybox/bin"
-		run: [
-			"ln -s ./\(_ctx.TARGETARCH)/lib ./lib",
-			"ln -s ./\(_ctx.TARGETARCH)/include ./include",
-		]
-	}
-
 	_flat: core.#Copy & {
-		"contents": _ln.output.rootfs
+		"contents": _merge.output
 		"dest":     "/"
 		"source":   "/"
 		"include": [

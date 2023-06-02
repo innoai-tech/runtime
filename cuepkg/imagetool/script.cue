@@ -13,7 +13,8 @@ import (
 	run: [...string]
 
 	mounts: [Name=string]: core.#Mount
-	env: [string]:         string | core.#Secret
+	shell: string | *"sh"
+	env: [string]: string | core.#Secret
 	workdir?: string
 	user?:    string
 	always?:  bool
@@ -27,6 +28,7 @@ import (
 
 				#Shell & {
 					"input":  _output
+					"shell":  shell
 					"run":    script
 					"env":    env
 					"mounts": mounts
