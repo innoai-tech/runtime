@@ -1,3 +1,5 @@
+export BUILDKIT_HOST =
+
 test.%:
 	wagon do -p ./cuepkg/$*/examples/test.cue test
 
