@@ -1,7 +1,6 @@
 package helm
 
 import (
-	"strings"
 	"encoding/yaml"
 
 	"wagon.octohelm.tech/core"
@@ -25,7 +24,7 @@ import (
 	values: _
 
 	_files: [Path=string]: core.#WriteFile & {
-		path:  Path
+		path: Path
 	}
 
 	_files: {
@@ -72,9 +71,9 @@ import (
 			name: "-c"
 			args: [
 				"""
-					ls /src
-					helm dependency build /src
-					helm template \(chart.name) /src > /output/manifests.yaml
+					ls /src;
+					helm dependency build /src;
+					helm template \(chart.name) /src > /output/manifests.yaml;
 					""",
 			]
 		}
@@ -85,7 +84,9 @@ import (
 		path:  "/output/manifests.yaml"
 	}
 
-	_parts: strings.Split(strings.TrimPrefix(_read.contents, "---"), "\n---")
+	_manifests: core.#CloneWithoutNull & {
+		input: yaml.UnmarshalStream(_read.contents)
+	}
 
 	output: kubepkg.#KubePkg & {
 		metadata: "namespace": namespace
@@ -93,18 +94,9 @@ import (
 		metadata: name: chart.name
 		spec: version:  chart.version
 
-		for part in _parts {
-			let v = yaml.Unmarshal(part)
-			if v != _|_ {
-				if v.kind != _|_ {
-					spec: manifests: "\(v.kind)": "\(v.metadata.name)": v
-
-					if (v.kind == "Deployment" || v.kind == "DaemonSet" || v.kind == "StatefulSet") {
-						for c in v.spec.template.spec.containers {
-							spec: images: "\(c.image)": ""
-						}
-					}
-				}
+		for v in _manifests.output {
+			if v.kind != _|_ {
+				spec: manifests: "\(v.metadata.name).\(v.kind)": v
 			}
 		}
 	}
