@@ -3,6 +3,7 @@ package imagetool
 import (
 	"strings"
 	"path"
+	"list"
 
 	"wagon.octohelm.tech/core"
 	"wagon.octohelm.tech/docker"
@@ -47,11 +48,7 @@ import (
 		}
 	}
 
-	_values: [
-		for _id, _p in _pull {
-			_id
-		},
-	]
+	_values: list.Sort([ for _id, _p in _pull {_id}], list.Ascending)
 
 	_dep: {
 		"0": {
