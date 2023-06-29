@@ -20,6 +20,7 @@ import (
 			CI_JOB_USER:  auth.username
 			CI_JOB_TOKEN: auth.secret
 		}
+		always: true
 		run: [
 			"git config --global url.https://${CI_JOB_USER}:${CI_JOB_TOKEN}@\(host)/.insteadOf https://\(host)/",
 		]
