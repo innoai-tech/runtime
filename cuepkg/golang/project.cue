@@ -60,11 +60,13 @@ import (
 				"\(binary)_\(os)_\(arch)": {
 					_image: build["\(os)/\(arch)"].output
 
-					core.#Copy & {
+					_copy: core.#Copy & {
 						contents: _image.rootfs
 						source:   "/output"
 						dest:     "/"
 					}
+
+					output: _copy.output
 				}
 			}
 		}
