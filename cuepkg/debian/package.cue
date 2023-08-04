@@ -33,10 +33,16 @@ import (
 					LINUX_MIRROR: _client_env.LINUX_MIRROR
 				}
 				"run": """
-						if [ "${LINUX_MIRROR}" != "" ]; then
-							sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-							sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
-						fi
+					if [ "${LINUX_MIRROR}" != "" ]; then
+							if [ -f "/etc/apt/sources.list" ]; then
+									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list
+							fi
+							if [ -f "/etc/apt/sources.list.d/debian.sources" ]; then
+									sed -i "s@http://deb.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list.d/debian.sources
+									sed -i "s@http://security.debian.org@${LINUX_MIRROR}@g" /etc/apt/sources.list.d/debian.sources
+							fi
+					fi
 					"""
 			}
 
