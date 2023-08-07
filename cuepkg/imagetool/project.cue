@@ -3,14 +3,13 @@ package imagetool
 #Project: {
 	version:  string | *"dev"
 	revision: string | *""
-	mirror:   #Mirror
+
+	mirror: #Mirror
 	auths: [Host=string]: #Auth
 
-	ship?: #Ship
+	ship: #Ship
+	ship: "auths":  auths
+	ship: "mirror": mirror
 
-	if ship != _|_ {
-		ship: "auths":  auths
-		ship: "mirror": mirror
-	}
 	...
 }
