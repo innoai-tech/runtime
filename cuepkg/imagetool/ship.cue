@@ -13,7 +13,28 @@ import (
 	arch: string
 }
 
-#Ship: {
+#Ship: #ShipConfig & {
+	name: _
+	tag:  _
+
+	from:      _
+	platforms: _
+	config:    _
+	steps:     _
+	postSteps: _
+
+	variant: [Variant=string]: #ShipConfig & {
+		"name":      _ | *"\(name)"
+		"tag":       _ | *"\(Variant)-\(tag)"
+		"from":      _ | *from
+		"platforms": _ | *platforms
+		"config":    _ | *config
+		"steps":     _ | *steps
+		"postSteps": _ | *postSteps
+	}
+}
+
+#ShipConfig: {
 	name: string
 	tag:  string
 
@@ -117,4 +138,6 @@ import (
 			}
 		}
 	}
+
+	...
 }

@@ -83,7 +83,7 @@ import (
 		output: _output.output.rootfs
 	}
 
-	ship: {
+	ship?: {
 		platforms: [
 			for arch in targetarch {
 				"linux/\(arch)"

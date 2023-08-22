@@ -83,7 +83,7 @@ import (
 	version:  _
 	revision: _
 
-	ship: {
+	ship?: {
 		tag: _ | *"\(version)"
 
 		config: {
@@ -118,7 +118,9 @@ import (
 		]
 	}
 
-	_gomod: #Info & {"source": source.output}
+	_gomod: #Info & {
+		"source": source.output
+	}
 
 	goversion: _ | *"\(_gomod.go)"
 	module:    _ | *"\(_gomod.module)"

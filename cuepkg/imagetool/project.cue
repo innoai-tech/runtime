@@ -7,9 +7,10 @@ package imagetool
 	mirror: #Mirror
 	auths: [Host=string]: #Auth
 
-	ship: #Ship
-	ship: "auths":  auths
-	ship: "mirror": mirror
+	ship?: #Ship & {
+		"auths":  auths
+		"mirror": mirror
+	}
 
 	...
 }
