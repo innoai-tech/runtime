@@ -38,7 +38,7 @@ actions: {
 
 actions: test: testing.#Test & {
 	"go build archive should output binaries": {
-		_dir: core.#FileList & {
+		_dir: core.#Entries & {
 			input: actions.go.archive.output
 			depth: 2
 		}
@@ -55,14 +55,18 @@ actions: test: testing.#Test & {
 	"go shiped image": {
 		_image: actions.go.ship.image["linux/arm64"]
 
-		_dir: core.#FileList & {
+		_dir: core.#Entries & {
 			input: _image.output.rootfs
 			depth: 3
 		}
 
 		actual: _dir.output
 		expect: [
+			"/bin/",
+			"/boot/",
+			"/dev/",
 			"/etc/debian_version",
+			"/etc/default/",
 			"/etc/dpkg/origins/",
 			"/etc/ethertypes",
 			"/etc/group",
@@ -72,12 +76,25 @@ actions: test: testing.#Test & {
 			"/etc/nsswitch.conf",
 			"/etc/os-release",
 			"/etc/passwd",
+			"/etc/profile.d/",
 			"/etc/protocols",
 			"/etc/rpc",
 			"/etc/services",
+			"/etc/skel/",
 			"/etc/ssl/certs/",
 			"/etc/update-motd.d/10-uname",
 			"/hello",
+			"/home/nonroot/",
+			"/lib/",
+			"/proc/",
+			"/root/",
+			"/run/",
+			"/sbin/",
+			"/sys/",
+			"/tmp/",
+			"/usr/bin/",
+			"/usr/games/",
+			"/usr/include/",
 			"/usr/lib/os-release",
 			"/usr/sbin/tzconfig",
 			"/usr/share/base-files/",
@@ -89,8 +106,17 @@ actions: test: testing.#Test & {
 			"/usr/share/man/",
 			"/usr/share/misc/",
 			"/usr/share/zoneinfo/",
+			"/usr/src/",
+			"/var/backups/",
+			"/var/cache/",
 			"/var/lib/dpkg/",
 			"/var/lib/misc/",
+			"/var/local/",
+			"/var/lock/",
+			"/var/log/",
+			"/var/run/",
+			"/var/spool/",
+			"/var/tmp/",
 		]
 	}
 }

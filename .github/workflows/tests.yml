@@ -12,6 +12,7 @@ jobs:
       matrix:
         target:
           - debian
+          - distroless
           - golang
           - kubepkgtool
 

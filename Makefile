@@ -10,3 +10,4 @@ test: \
 
 clean:
 	find ./cuepkg -name 'cue.mod' -type d -prune -print -exec rm -rf '{}' \;
+
