@@ -59,7 +59,7 @@ import (
 	}
 
 	_archives: {
-		for _p, _fs in directories {
+		for _p, _fs in directories if archive {
 			"\(_p)": #Tar & {
 				contents: _fs
 				dest:     "/\(_p)"

@@ -17,23 +17,19 @@ import (
 	name: string
 	base: source: string
 
-	mirror: imagetool.#Mirror
 	auths: [Host=string]: imagetool.#Auth
 
 	packages: [Name=string]: debian.#PackageOption
 
 	_base: imagetool.#Pull & {
 		"source": base.source
-		"mirror": mirror
 		"auths":  auths
 	}
 
 	_pkg: debian.#Build & {
 		"platform": input.platform
 		"packages": packages
-
-		"mirror": mirror
-		"auths":  auths
+		"auths": auths
 	}
 
 	_ctx: {

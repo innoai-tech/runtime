@@ -24,8 +24,9 @@ import (
 	postSteps: _
 
 	variant: [Variant=string]: #ShipConfig & {
-		"name":      _ | *"\(name)"
-		"tag":       _ | *"\(Variant)-\(tag)"
+		"name": _ | *"\(name)"
+		"tag":  _ | *"\(Variant)-\(tag)"
+
 		"from":      _ | *from
 		"platforms": _ | *platforms
 		"config":    _ | *config
@@ -45,14 +46,12 @@ import (
 	postSteps: [...docker.#Step]
 
 	auths: [Host=string]: #Auth
-	mirror: #Mirror
 
-	_images: {
+	image: {
 		for platform in platforms {
 			"\(platform)": #Build & {
 				"auths":    auths
 				"from":     from
-				"mirror":   mirror
 				"platform": "\(platform)"
 				"steps": [
 					for step in steps {
@@ -91,7 +90,7 @@ import (
 		"auths": auths
 		"images": {
 			for platform in platforms {
-				"\(platform)": _images["\(platform)"].output
+				"\(platform)": image["\(platform)"].output
 			}
 		}
 	}
@@ -116,7 +115,7 @@ import (
 			"\(arch)": #Push & {
 				"auths": auths
 				"dest":  "\(_dest)-\(arch)"
-				"image": _images["\(platform)"].output
+				"image": image["\(platform)"].output
 			}
 		}
 
@@ -129,7 +128,6 @@ import (
 				for platform in platforms {
 					_pull: "\(platform)": #Pull & {
 						"auths":  auths
-						"mirror": mirror
 						"source": "\(_dest)-\(strings.Split(platform, "/")[1])"
 					}
 

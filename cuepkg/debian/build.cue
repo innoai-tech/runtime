@@ -5,12 +5,11 @@ import (
 	"github.com/innoai-tech/runtime/cuepkg/imagetool"
 )
 
-#Version: "bullseye" // debian 11
+#Version: "bookworm" // debian 12
 
 #ImageBase: {
 	packages: [pkgName=string]: #PackageOption
 	steps: [...docker.#Step]
-	mirror: imagetool.#Mirror
 	auths: [Host=string]: imagetool.#Auth
 	...
 }
@@ -21,12 +20,12 @@ import (
 
 	packages: _
 	steps:    _
-	auths:  _
+	auths:    _
 
 	platform?: string
 
 	_pull: imagetool.#Pull & {
-		"source": "\(source)"
+		"source": source
 		"auths":  auths
 		if platform != _|_ {
 			"platform": platform

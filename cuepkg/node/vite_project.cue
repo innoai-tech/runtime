@@ -13,7 +13,6 @@ import (
 	version:  _
 	revision: _
 	auths:    _
-	mirror:   _
 
 	viteconfig: string | *"vite.config.ts"
 
@@ -31,8 +30,7 @@ import (
 
 		// dev image setting
 		image: #Image & {
-			"auths":  auths
-			"mirror": mirror
+			"auths": auths
 		}
 
 		_build: docker.#Build & {

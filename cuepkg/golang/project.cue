@@ -22,7 +22,7 @@ import (
 	cgo:     bool | *false
 	isolate: bool | *cgo
 
-	ldflags: [...string] | *["-x -w"]
+	ldflags: [...string] | *["-s -w"]
 	workdir: string | *"/go/src"
 
 	main:   string | *"."
@@ -30,8 +30,7 @@ import (
 	env: [Name=string]:    string | core.#Screct
 	mounts: [Name=string]: core.#Mount
 
-	auths:  _
-	mirror: _
+	auths: _
 
 	// Go build binary for special platform 
 	build: {
@@ -42,8 +41,7 @@ import (
 
 		// dev image 
 		image: debian.#ImageBase
-		image: "auths":  auths
-		image: "mirror": mirror
+		image: "auths": auths
 
 		for os in goos for arch in goarch {
 			"\(os)/\(arch)": {
@@ -72,8 +70,6 @@ import (
 		}
 
 		tool.#Export & {
-			archive: true
-
 			for name, fs in _binary {
 				directories: "\(name)": fs.output
 			}

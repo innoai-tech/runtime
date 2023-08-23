@@ -9,8 +9,6 @@ import (
 
 #Pull: {
 	auths: [Host=string]: #Auth
-	mirror: #Mirror
-
 	source: docker.#Ref
 
 	resolveMode: *"default" | "forcePull" | "preferLocal"
@@ -18,15 +16,8 @@ import (
 
 	_host: strings.Split("\(source)", "/")[0]
 
-	_source: [
-			if (mirror.pull != "" && !strings.HasPrefix(source, mirror.pull)) {
-			"\(mirror.pull)\(source)"
-		},
-		source,
-	][0]
-
 	_pull: core.#Pull & {
-		"source":      _source
+		"source":      source
 		"resolveMode": resolveMode
 
 		if auths["\(_host)"] != _|_ {

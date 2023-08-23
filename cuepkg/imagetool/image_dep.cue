@@ -13,7 +13,6 @@ import (
 	input: docker.#Image
 	dependencies: [Path=string]: string
 	auths: [Host=string]:        #Auth
-	mirror: #Mirror
 
 	_platform: core.#Nop & {
 		"input": input.platform
@@ -28,7 +27,6 @@ import (
 					#Pull & {
 						"source":   "\(name):\(version)"
 						"auths":    auths
-						"mirror":   mirror
 						"platform": platform
 					}
 				}
@@ -40,7 +38,6 @@ import (
 					#Pull & {
 						"source":   "\(name):\(version)"
 						"auths":    auths
-						"mirror":   mirror
 						"platform": _platform.output
 					}
 				}
