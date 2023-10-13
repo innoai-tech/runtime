@@ -77,7 +77,7 @@ import (
 				"""
 					ls /src;
 					helm dependency build /src;
-					helm template \(chart.name) /src > /output/manifests.yaml;
+					helm template --namespace=\(namespace) \(chart.name) /src > /output/manifests.yaml;
 					""",
 			]
 		}
