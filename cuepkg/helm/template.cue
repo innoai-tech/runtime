@@ -1,6 +1,7 @@
 package helm
 
 import (
+	"list"
 	"encoding/yaml"
 
 	"wagon.octohelm.tech/core"
@@ -21,7 +22,10 @@ import (
 			name?:      string
 		}
 	}
+
 	values: _
+
+	exclude: [...string] | *[]
 
 	_files: [Path=string]: core.#WriteFile & {
 		path: Path
@@ -84,8 +88,22 @@ import (
 		path:  "/output/manifests.yaml"
 	}
 
+	preConvert: [...#Step]
+
+	_preConvert: {
+		"0": {
+			output: _read.contents
+		}
+
+		for i, s in preConvert {
+			"\(i+1)": s & {
+				input: _preConvert["\(i)"].output
+			}
+		}
+	}
+
 	_manifests: core.#CloneWithoutNull & {
-		input: yaml.UnmarshalStream(_read.contents)
+		input: yaml.UnmarshalStream(_preConvert["\(len(_preConvert)-1)"].output)
 	}
 
 	output: kubepkg.#KubePkg & {
@@ -96,8 +114,17 @@ import (
 
 		for v in _manifests.output {
 			if v.kind != _|_ {
-				spec: manifests: "\(v.metadata.name).\(v.kind)": v
+				let k = "\(v.metadata.name).\(v.kind)"
+
+				if !list.Contains(exclude, k) {
+					spec: manifests: "\(k)": v
+				}
 			}
 		}
 	}
+}
+
+#Step: {
+	input?: string
+	output: string
 }
