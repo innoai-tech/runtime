@@ -15,14 +15,20 @@ import (
 		env:   string | *"default"
 	}
 
-	_files: "/src/kubepkg.json": core.#WriteFile & {
-		path:     "kubepkg.json"
-		contents: json.Marshal(kubepkg)
-	}
-
 	_env: core.#ClientEnv & {
 		KUBEPKG_DASHBOARD_ENDPOINT: string | *""
 		KUBEPKG_ACCESS_TOKEN:       core.#Secret
+		CI_COMMIT_AUTHOR:           string |*""
+		CI_COMMIT_TITLE:            string|*""
+	}
+
+	kubepkg: metadata: annotations:{
+		"kubepkg.innoai.tech/desc":"\(_env.CI_COMMIT_AUTHOR)\(_env.CI_COMMIT_TITLE)"
+	}
+
+	_files: "/src/kubepkg.json": core.#WriteFile & {
+		path:     "kubepkg.json"
+		contents: json.Marshal(kubepkg)
 	}
 
 	_image: docker.#Pull & {
