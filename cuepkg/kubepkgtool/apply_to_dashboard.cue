@@ -23,6 +23,8 @@ import (
 	_env: core.#ClientEnv & {
 		KUBEPKG_DASHBOARD_ENDPOINT: string | *""
 		KUBEPKG_ACCESS_TOKEN:       core.#Secret
+		CI_COMMIT_AUTHOR:           string |*""
+		CI_COMMIT_TITLE:            string |*""
 	}
 
 	_image: docker.#Pull & {
@@ -45,6 +47,8 @@ import (
 		env: {
 			KUBEPKG_DASHBOARD_ENDPOINT: _env.KUBEPKG_DASHBOARD_ENDPOINT
 			KUBEPKG_ACCESS_TOKEN:       _env.KUBEPKG_ACCESS_TOKEN
+			CI_COMMIT_AUTHOR:           _env.CI_COMMIT_AUTHOR
+			CI_COMMIT_TITLE:            _env.CI_COMMIT_TITLE
 		}
 
 		always: true
@@ -57,7 +61,7 @@ import (
 				--header "Authorization: Bearer ${KUBEPKG_ACCESS_TOKEN}" \\
 				--data "@/src/kubepkg.json" \\
 				--fail \\
-			"${KUBEPKG_DASHBOARD_ENDPOINT}/api/kubepkg-dashboard/v0/groups/\(target.group)/envs/\(target.env)/deployments"
+			"${KUBEPKG_DASHBOARD_ENDPOINT}/api/kubepkg-dashboard/v0/groups/\(target.group)/envs/\(target.env)/deployments?desc=${CI_COMMIT_AUTHOR}${CI_COMMIT_TITLE}"
 			"""
 		}
 	}
