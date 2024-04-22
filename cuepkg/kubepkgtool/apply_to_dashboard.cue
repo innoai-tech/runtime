@@ -26,11 +26,15 @@ import (
 		CI_COMMIT_AUTHOR:           string | *""
 		CI_COMMIT_TITLE:            string | *""
 		CI_COMMIT_SHA:              string | *""
+		CI_COMMIT_BRANCH:           string | *""
+		CI_COMMIT_TAG:              string | *""
 	}
 
 	kubepkg: metadata: annotations:{
 		"kubepkg.innoai.tech/commitInfo":"\(_env.CI_COMMIT_AUTHOR)\(_env.CI_COMMIT_TITLE)"
 		"kubepkg.innoai.tech/commitID":"\(_env.CI_COMMIT_SHA)"
+		"kubepkg.innoai.tech/commitBranch":"\(_env.CI_COMMIT_BRANCH)"
+		"kubepkg.innoai.tech/commitTag":"\(_env.CI_COMMIT_TAG)"
 	}
 
 	_image: docker.#Pull & {
