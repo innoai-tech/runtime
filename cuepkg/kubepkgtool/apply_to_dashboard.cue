@@ -23,12 +23,14 @@ import (
 	_env: core.#ClientEnv & {
 		KUBEPKG_DASHBOARD_ENDPOINT: string | *""
 		KUBEPKG_ACCESS_TOKEN:       core.#Secret
-		CI_COMMIT_AUTHOR:           string |*""
-		CI_COMMIT_TITLE:            string|*""
+		CI_COMMIT_AUTHOR:           string | *""
+		CI_COMMIT_TITLE:            string | *""
+		CI_COMMIT_SHA:              string | *""
 	}
 
 	kubepkg: metadata: annotations:{
 		"kubepkg.innoai.tech/commitInfo":"\(_env.CI_COMMIT_AUTHOR)\(_env.CI_COMMIT_TITLE)"
+		"kubepkg.innoai.tech/commitID":"\(_env.CI_COMMIT_SHA)"
 	}
 
 	_image: docker.#Pull & {
